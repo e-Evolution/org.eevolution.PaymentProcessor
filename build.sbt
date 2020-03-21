@@ -28,7 +28,7 @@ lazy val commonSettings = Seq(
 )
 scalaVersion := "2.13.1"
 libraryDependencies ++= Seq(
-  "com.stripe" % "stripe-java" % "18.1.0",
+  "com.stripe" % "stripe-java" % "18.7.0",
   "dev.zio" %% "zio" % "1.0.0-RC18",
   "io.getquill" %% "quill-jdbc" % "3.5.0",
   "org.postgresql" % "postgresql" % "42.2.8"
