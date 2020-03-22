@@ -16,7 +16,7 @@
 
 package org.eevolution.context.paymentprocessor.infrastructure.respository
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.PaymentProcessor
+import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, PaymentProcessor}
 import org.eevolution.context.paymentprocessor.api
 import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
 import org.eevolution.context.paymentprocessor.api.repository.PaymentProcessorRepository.Service
@@ -49,6 +49,21 @@ object PaymentProcessorRepository {
             }
           } yield paymentProcessor
         )
+
+      override def get(bankAccountId: Id, name: String): ZIO[ContextEnvironment, Throwable, PaymentProcessor] =    ZIO.accessM(
+        environment => for {
+          ctx <- environment.execution.getContext
+          trx <- environment.execution.getTransaction
+          paymentProcessor <- ZIO.fromTry {
+            Try {
+              //val result = prepare(quotePaymentProcessor.filter(_.paymentProcessorId == lift(id)))(trx.getConnection).executeQuery()
+              //val paymentProcessor = new MPaymentProcessor(ctx, result, trx.getTrxName)
+              val paymentProcessor = run(quotePaymentProcessor.filter(paymentProcessor => paymentProcessor.bankAccountId == lift(bankAccountId) && paymentProcessor.name == lift(name))).headOption.get
+              paymentProcessor
+            }
+          }
+        } yield paymentProcessor
+      )
     }
   }
 

@@ -558,7 +558,7 @@ object PaymentBuilder {
               0,
               0,
               0,
-              "",
+              0,
               currency.Id,
               documentType.Id,
               0.0,

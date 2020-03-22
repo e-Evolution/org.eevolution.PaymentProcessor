@@ -34,7 +34,7 @@ import org.eevolution.context.paymentprocessor.UbiquitousLanguage._
   * @param description Description
   * @param uuid        UUID
   */
-case class User(userId: Id, partnerId: Id, tenantId: TableDirect, organizationId: TableDirect, isActive: YesNo = true, created: DateTime = Instant.now(), createdBy: Table, updated: DateTime = Instant.now(), updatedBy: Table, name: String, description: Option[String], email: String, password: String, uuid: String) extends DomainModel
+case class User(userId: Id, partnerId: Id, tenantId: TableDirect, organizationId: TableDirect, isActive: YesNo = true, created: DateTime = Instant.now(), createdBy: Table, updated: DateTime = Instant.now(), updatedBy: Table, name: String, description: String, email: String, password: String, uuid: String) extends DomainModel
 
   with ActiveEnabled
   with Identifiable
@@ -64,5 +64,5 @@ object User {
              description: String,
              email : String ,
              password: String,
-             uuid: String) = User(userId, partnerId, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, name, Some(description), email, password, uuid)
+             uuid: String) = User(userId, partnerId, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, name, description, email, password, uuid)
 }

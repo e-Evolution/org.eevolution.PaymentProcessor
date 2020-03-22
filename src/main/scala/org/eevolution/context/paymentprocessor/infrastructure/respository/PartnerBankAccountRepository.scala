@@ -86,7 +86,8 @@ object PartnerBankAccountRepository {
               partnerBankAccountModel.setA_Name(partnerBankAccount.accountName)
               partnerBankAccountModel.setAD_Org_ID(partnerBankAccount.organizationId)
               partnerBankAccountModel.saveEx()
-              partnerBankAccount.copy(partnerBankAccountId = partnerBankAccountModel.get_ID,
+              partnerBankAccount.copy(
+                partnerBankAccountId = partnerBankAccountModel.get_ID,
                 uuid = partnerBankAccountModel.getUUID,
                 createdBy = partnerBankAccountModel.getCreatedBy,
                 created = partnerBankAccountModel.getCreated.toInstant ,

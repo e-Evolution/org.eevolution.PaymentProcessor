@@ -16,11 +16,12 @@
 
 package org.eevolution.context.paymentprocessor.infrastructure.respository
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Partner, User}
+import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Partner, PartnerBankAccount, User}
 import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
 import org.eevolution.context.paymentprocessor.api.repository.UserRepository.Service
 import org.eevolution.context.paymentprocessor.domain.factory.UserBuilder
 import org.eevolution.context.paymentprocessor.infrastructure.database.context._
+import org.eevolution.context.paymentprocessor.infrastructure.persistence.model.{MPartnerBankAccount, MUser}
 import zio.ZIO
 
 import scala.util.Try
@@ -63,6 +64,33 @@ object UserRepository {
         } yield user)
 
       override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[ContextEnvironment, Any, User] = UserBuilder().WithPartnerId(partner.partnerId).WithName(userName).WithEmail(accountEmail).WithPassword(userPassword).build()
+
+      override def save(user: User): ZIO[ContextEnvironment, Throwable, User] = ZIO.accessM(
+        environment => for {
+          ctx <- environment.execution.getContext
+          trx <- environment.execution.getTransaction
+          user <- ZIO.fromTry {
+            Try {
+              val userModel = new MUser(ctx, user.userId, trx.getTrxName)
+              userModel.setAD_Org_ID(user.organizationId)
+              userModel.setC_BPartner_ID(user.partnerId)
+              userModel.setDescription(user.description)
+              userModel.setName(user.name)
+              userModel.setEMail(user.email)
+              userModel.setPassword(user.password)
+              user.copy(
+                userId = userModel.get_ID,
+                uuid = userModel.getUUID,
+                createdBy = userModel.getCreatedBy,
+                created = userModel.getCreated.toInstant,
+                updatedBy = userModel.getUpdatedBy,
+                updated = userModel.getUpdated.toInstant
+              )
+              user
+            }
+          }
+        } yield user
+      )
     }
   }
 

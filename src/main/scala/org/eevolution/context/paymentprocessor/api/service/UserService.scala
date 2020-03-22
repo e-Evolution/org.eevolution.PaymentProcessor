@@ -40,6 +40,8 @@ object UserService {
     def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User]
 
     def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User]
+
+    def save (user:User) : ZIO[UserServiceEnvironment, Throwable, User]
   }
 
   trait Live extends UserService
@@ -51,6 +53,8 @@ object UserService {
       override def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User] = ???
 
       override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User] = ???
+
+      override def save(user: User): ZIO[UserServiceEnvironment, Throwable, User] = ???
     }
   }
 

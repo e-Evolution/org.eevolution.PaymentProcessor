@@ -18,6 +18,7 @@ package org.eevolution.context.paymentprocessor.domain.service
 
 import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Partner, User}
 import org.eevolution.context.paymentprocessor.api
+import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
 import org.eevolution.context.paymentprocessor.api.service.UserService.{Service, UserServiceEnvironment}
 import zio.ZIO
 
@@ -35,6 +36,8 @@ object UserService {
       override def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.userRepository.getUser(partnerId,userName,accountEmail, password))
 
       override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User] =  ZIO.accessM(_.userRepository.create(partner,userName,accountEmail,userPassword))
+
+      override def save(user: User): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.userRepository.save(user))
     }
   }
 

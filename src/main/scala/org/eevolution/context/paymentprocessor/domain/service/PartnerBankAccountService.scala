@@ -19,9 +19,7 @@ package org.eevolution.context.paymentprocessor.domain.service
 
 import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, PartnerBankAccount}
 import org.eevolution.context.paymentprocessor.api
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
-import org.eevolution.context.paymentprocessor.api.service.PartnerBankAccountService.Service
-import org.eevolution.context.paymentprocessor.api.service.PartnerBankAccountService.PartnerBankAccountServiceEnvironment
+import org.eevolution.context.paymentprocessor.api.service.PartnerBankAccountService.{PartnerBankAccountServiceEnvironment, Service}
 import zio.ZIO
 
 /**

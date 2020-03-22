@@ -48,6 +48,7 @@ val sourceAdempiere = "/Users/e-Evolution/Develop/ADempiere/develop"
 
 unmanagedJars in Compile ++= (file(sourceAdempiere + "/lib") * "*.jar").classpath
 unmanagedJars in Compile ++= (file(sourceAdempiere + "/packages") * "*.jar").classpath
+unmanagedJars in Compile ++= (file("lib") * "*.jar").classpath
 
 unmanagedBase := baseDirectory.value / "lib"
 unmanagedClasspath in Compile += file(sourceAdempiere + "/bin")

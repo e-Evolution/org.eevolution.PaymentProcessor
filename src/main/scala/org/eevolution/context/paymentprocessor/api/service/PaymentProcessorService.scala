@@ -34,12 +34,14 @@ trait PaymentProcessorService {
   */
 object PaymentProcessorService {
 
-  type PaymentProcessorServiceEnvironment = ContextEnvironment with PaymentProcessorRepository with PartnerService with PartnerRepository with UserService with UserRepository with PartnerBankAccountService with PartnerBankAccountRepository with BankAccountService with BankAccountRepository with CurrencyService with CurrencyRepository
+  type PaymentProcessorServiceEnvironment = ContextEnvironment with PaymentService with PaymentRepository with PaymentProcessorRepository with PartnerService with PartnerRepository with UserService with UserRepository with PartnerBankAccountService with PartnerBankAccountRepository with BankAccountService with BankAccountRepository with CurrencyService with CurrencyRepository
 
   trait Service {
     def getById(id: Id): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor]
 
     def processing(paymentProcessor: PaymentProcessor, payment: Payment): ZIO[PaymentProcessorServiceEnvironment, Any, String]
+
+    def get(bankId: Id, name: String): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor]
   }
 
   trait Live extends PaymentProcessorService
@@ -49,6 +51,8 @@ object PaymentProcessorService {
       override def getById(id: Id): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor] = ???
 
       override def processing(paymentProcessor: PaymentProcessor, payment: Payment): ZIO[PaymentProcessorServiceEnvironment, Any, String] = ???
+
+      override def get(bankId: Id, name: String): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor] = ???
     }
   }
 

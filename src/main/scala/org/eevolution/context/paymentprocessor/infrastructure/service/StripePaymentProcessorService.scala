@@ -34,11 +34,17 @@ object StripePaymentProcessorService {
 
   object Live extends Live {
     override def paymentProcessorService: api.service.PaymentProcessorService.Service = new Service {
-      override def getById(id: Id): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor] = ZIO.accessM(_.paymentProcessorRepository.getById(id))
+      override def getById(id: Id): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor] =
+        ZIO.accessM(_.paymentProcessorRepository.getById(id))
 
+      override def get(bankAccountId: Id, name: String): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor] =
+        ZIO.accessM(_.paymentProcessorRepository.get(bankAccountId, name))
 
-      override def processing(paymentProcessor: PaymentProcessor, payment: Payment): ZIO[PaymentProcessorServiceEnvironment, Any, String] = ZIO.accessM(environment =>
+      override def processing(paymentProcessor: PaymentProcessor, payment: Payment):
+      ZIO[PaymentProcessorServiceEnvironment, Any, String] = ZIO.accessM(environment =>
         for {
+          bankAccount <- environment.bankAccountService.getById(payment.bankAccountId)
+          paymentProcessor <- get(bankAccount.bankAccountId, "Stripe")
           _ <- ZIO.effectTotal(Stripe.apiKey = paymentProcessor.password)
           // get the partner based on partner id register in payment created
           partner <- environment.partnerService.getById(payment.partnerId)
@@ -59,27 +65,40 @@ object StripePaymentProcessorService {
               }
               customer
             })
-          //Try get a contact with "Stripe" User Name for this partner suing the email and Stripe Customer id save as User password if not exist then create a new user
-          stripeUser <- environment.userService.getUser(partner.partnerId, "Stripe", partner.value, customer.getId)
+          //Try get a contact with "Stripe" User Name for this partner suing the email and
+          //Stripe Customer id save as User password If not exist then create a new user
+          stripeUser <- environment.userService.getUser(
+            partner.partnerId,
+            "Stripe",
+            partner.value,
+            customer.getId)
             // Create new User link this Partner
             .orElse(environment.userService.create(partner, "Stripe", partner.value, customer.getId))
-          //Get the account bank for Stripe Bank into ERP based on Bank Account id save in payment
-          bankAccount <- environment.bankAccountService.getById(payment.bankAccountId)
-          //Try get the credit card as partner bank account for this partner the Stripe Bank id , user id , email and payment account name , if partner bank account for this credit card not exist then is new partner bank account created
-          partnerBankAccount <- environment.partnerBankAccountService.getById(partner.partnerId, bankAccount.bankId, stripeUser.userId, payment.accountEMail.get, null, payment.accountName.get)
+          //Persistence stripe User
+          _ <- environment.userService.save(stripeUser)
+          //Try get the credit card as partner bank account for this partner the Stripe Bank id , user id ,
+          //email and payment account name , if partner bank account for this credit card not exist
+          //then is new partner bank account created
+          partnerBankAccount <- environment.partnerBankAccountService.getById(
+            partner.partnerId,
+            bankAccount.bankId,
+            stripeUser.userId,
+            payment.accountEMail,
+            null,
+            payment.accountName)
             // Create a default partner bank account for this credit card
             .orElse(environment.partnerBankAccountService.create(
               partner.partnerId,
               bankAccount.bankId,
               stripeUser.userId,
-              payment.accountEMail.get,
-              payment.accountNo.get,
-              payment.accountName.get,
+              payment.accountEMail,
+              payment.accountNo,
+              payment.accountName,
               payment.creditCardType,
-              payment.creditCardNumber.get,
-              payment.creditCardExpMM.get,
-              payment.creditCardExpYY.get,
-              payment.creditCardVerificationCode.get))
+              payment.creditCardNumber,
+              payment.creditCardExpMM,
+              payment.creditCardExpYY,
+              payment.creditCardVerificationCode))
           // Try get Stripe Source or Generate a Credit Card Token
           source <- ZIO.fromTry(
             Try {
@@ -89,9 +108,9 @@ object StripePaymentProcessorService {
                 case None =>
                   //Generate new Stripe source based on credit card info
                   val cardParameters = new util.HashMap[String, Object]()
-                  val creditCardExpMM = payment.creditCardExpMM.get
-                  val creditCardExpYY = payment.creditCardExpYY.get
-                  cardParameters.put("number", payment.creditCardNumber.get)
+                  val creditCardExpMM = payment.creditCardExpMM
+                  val creditCardExpYY = payment.creditCardExpYY
+                  cardParameters.put("number", payment.creditCardNumber)
                   cardParameters.put("exp_month", creditCardExpMM.toString)
                   cardParameters.put("exp_year", creditCardExpYY.toString)
                   cardParameters.put("cvc", payment.creditCardVerificationCode)
@@ -111,13 +130,32 @@ object StripePaymentProcessorService {
           charge <- ZIO.fromTry(
             Try {
               val chargeParams = new util.HashMap[String, Object]()
-              chargeParams.put("amount", payment.paymentAmount.get * 100)
+              chargeParams.put("amount", payment.paymentAmount * 100)
               chargeParams.put("currency", currency.isoCode)
               chargeParams.put("source", source.getId)
               chargeParams.put("description", payment.description)
               val charge = Charge.create(chargeParams)
               charge
             })
+          // Save result
+          responseMessage <- ZIO.fromTry(
+            Try {
+              payment.copy(
+                authorizationCode = charge.getAuthorizationCode,
+                //authorizationCodeDC = ,
+                //addressVerified = charge,
+                //zipVerified = charge.,
+                //cvvMatch = charge,
+                info = charge.getDescription,
+                reference = charge.getId,
+                referenceDC = charge.getPaymentIntent,
+                responseMessage = charge.getFailureMessage,
+                result = charge.getStatus
+              )
+              environment.paymentService.save(payment)
+              charge.getStatus
+            }
+          )
         } yield charge.getStatus
       )
     }

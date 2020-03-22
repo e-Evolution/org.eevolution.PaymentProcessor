@@ -37,6 +37,7 @@ object UserRepository {
     def getById(id: Id): ZIO[ContextEnvironment, Throwable, User]
     def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[ContextEnvironment, Throwable, User]
     def create(partner : Partner , userName : String , accountEmail : String , userPassword : String) : ZIO[ContextEnvironment, Any, User]
+    def save (user:User) : ZIO[ContextEnvironment, Throwable, User]
   }
 
   trait Live extends UserRepository
@@ -48,6 +49,8 @@ object UserRepository {
       override def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[ContextEnvironment, Throwable, User] = ???
 
       override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[ContextEnvironment, Any, User] = ???
+
+      override def save(user: User): ZIO[ContextEnvironment, Throwable, User] = ???
     }
   }
 }

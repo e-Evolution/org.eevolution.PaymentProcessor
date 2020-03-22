@@ -18,7 +18,7 @@
 package org.eevolution.context.paymentprocessor.api.repository
 
 import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.PaymentProcessor
+import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, PaymentProcessor}
 import zio.ZIO
 
 /**
@@ -34,14 +34,17 @@ trait PaymentProcessorRepository {
 object PaymentProcessorRepository {
 
   trait Service {
-    def getById(id: Int): ZIO[ContextEnvironment, Throwable, PaymentProcessor]
+    def getById(id: Id): ZIO[ContextEnvironment, Throwable, PaymentProcessor]
+    def get(bankAccountId: Id, name: String): ZIO[ContextEnvironment, Throwable, PaymentProcessor]
   }
 
   trait Live extends PaymentProcessorRepository
 
   object Live extends PaymentProcessorRepository.Live {
     def paymentProcessorRepository: PaymentProcessorRepository.Service = new Service {
-      override def getById(id: Int): ZIO[ContextEnvironment, Throwable, PaymentProcessor] = ???
+      override def getById(id: Id): ZIO[ContextEnvironment, Throwable, PaymentProcessor] = ???
+
+      override def get(bankAccountId: Id, name: String): ZIO[ContextEnvironment, Throwable, PaymentProcessor] = ???
     }
   }
 }

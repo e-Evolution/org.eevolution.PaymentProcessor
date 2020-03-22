@@ -95,6 +95,8 @@ object PaymentService {
               .build()
           } yield payment
         )
+
+      override def save(payment: Payment): ZIO[PaymentServiceEnvironment, Throwable, Payment] = ???
     }
   }
 

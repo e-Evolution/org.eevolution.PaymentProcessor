@@ -39,6 +39,8 @@ object PaymentService {
   trait Service {
     def getById(id: Id): ZIO[PaymentServiceEnvironment, Throwable, Payment]
 
+    def save (payment: Payment): ZIO[PaymentServiceEnvironment, Throwable, Payment]
+
     def createPayment(documentType: DocumentType,
                       description: String,
                       bankAccount: BankAccount,
@@ -81,6 +83,8 @@ object PaymentService {
                                                creditCardExpMM: Id,
                                                creditCardExpYY: Id,
                                                verificationCode: String): ZIO[PaymentServiceEnvironment, Any, Payment] = ???
+
+      override def save(payment: Payment): ZIO[PaymentServiceEnvironment, Throwable, Payment] = ???
     }
   }
 
