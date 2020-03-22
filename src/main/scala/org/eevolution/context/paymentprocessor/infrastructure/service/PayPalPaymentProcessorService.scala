@@ -3,12 +3,12 @@ package org.eevolution.context.paymentprocessor.infrastructure.service
 import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Payment, PaymentProcessor}
 import org.eevolution.context.paymentprocessor.api.service.PaymentProcessorService
 import org.eevolution.context.paymentprocessor.api.service.PaymentProcessorService.{PaymentProcessorServiceEnvironment, Service}
-import paypal.payflow.{CardTender, CreditCard, Invoice, PayflowConnectionData, PayflowConstants, PayflowUtility, Response, SDKProperties, SaleTransaction, UserInfo}
+import paypal.payflow._
 import zio.ZIO
 
 import scala.util.Try
 
-class PayPalPaymentProcessorService {
+object PayPalPaymentProcessorService {
 
   trait Live extends PaymentProcessorService
 
