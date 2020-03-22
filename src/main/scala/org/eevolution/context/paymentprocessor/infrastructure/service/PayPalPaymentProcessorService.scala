@@ -53,7 +53,7 @@ object PayPalPaymentProcessorService {
             SDKProperties.setMaxLogFileSize(100000)
             SDKProperties.setStackTraceOn(true)
 
-            val user = new UserInfo("<user>", "<vendor>", "<partner>", "<password>")
+            val user = new UserInfo(paymentProcessor.userId, paymentProcessor.vendorId, paymentProcessor.partnerId, paymentProcessor.password)
             val connection = new PayflowConnectionData
             (user, connection)
           }
