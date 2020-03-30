@@ -14,46 +14,69 @@
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
 
-
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Payment, PaymentProcessor}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
-import org.eevolution.context.paymentprocessor.api.repository._
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.PaymentProcessorRepository
+import org.eevolution.context.paymentprocessor.api.repository.PaymentProcessorRepository.PaymentProcessorRepository
+import org.eevolution.context.paymentprocessor.api.service.BankAccountService
+import org.eevolution.context.paymentprocessor.api.service.BankAccountService.BankAccountService
+import org.eevolution.context.paymentprocessor.api.service.BankService
+import org.eevolution.context.paymentprocessor.api.service.BankService.BankService
+import org.eevolution.context.paymentprocessor.api.service.CurrencyService
+import org.eevolution.context.paymentprocessor.api.service.CurrencyService.CurrencyService
+import org.eevolution.context.paymentprocessor.api.service.PartnerBankAccountService.PartnerBankAccountService
+import org.eevolution.context.paymentprocessor.api.service.PartnerService
+import org.eevolution.context.paymentprocessor.api.service.PartnerService.PartnerService
+import org.eevolution.context.paymentprocessor.api.service.PaymentService
+import org.eevolution.context.paymentprocessor.api.service.PaymentService.PaymentService
+import org.eevolution.context.paymentprocessor.api.service.UserService
+import org.eevolution.context.paymentprocessor.api.service.UserService.UserService
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, PartnerBankAccount, Payment, PaymentProcessor}
+import org.eevolution.context.paymentprocessor.infrastructure.service.PayPalPaymentProcessorServiceLive
+import org.eevolution.context.paymentprocessor.infrastructure.service.StripePaymentProcessorServiceLive
+import zio.{Has, RIO, ZLayer}
+
+import scala.util.Try
 
 /**
-  * API Trait Domain Payment Processor Service
-  */
-trait PaymentProcessorService {
-  def paymentProcessorService: PaymentProcessorService.Service
-}
-
-/**
-  * API Singleton Object Domain Payment Processor Service
+  * Standard Implementation for Domain Payment Service
   */
 object PaymentProcessorService {
 
-  type PaymentProcessorServiceEnvironment = ContextEnvironment with PaymentService with PaymentRepository with PaymentProcessorRepository with PartnerService with PartnerRepository with UserService with UserRepository with PartnerBankAccountService with PartnerBankAccountRepository with BankAccountService with BankAccountRepository with CurrencyService with CurrencyRepository
+
+  type PaymentProcessorService = Has[Service]
 
   trait Service {
-    def getById(id: Id): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor]
+    def getById(id: Id): RIO[Any, Option[PaymentProcessor]]
 
-    def processing(paymentProcessor: PaymentProcessor, payment: Payment): ZIO[PaymentProcessorServiceEnvironment, Any, String]
+    def get(bankAccountId: Id, name: String): RIO[Any, Option[PaymentProcessor]]
 
-    def get(bankId: Id, name: String): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor]
+    def processing(paymentId: Id): RIO[Any, Option[String]]
   }
 
-  trait Live extends PaymentProcessorService
+  def live : ZLayer[PaymentProcessorRepository , Throwable, Has[Service]] = ZLayer.fromService[PaymentProcessorRepository.Service, Service]{
+    paymentProcessorRepository => {
+      new PaymentProcessorService.Service {
 
-  object Live extends PaymentProcessorService.Live {
-    def paymentProcessorService: PaymentProcessorService.Service = new Service {
-      override def getById(id: Id): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor] = ???
+        override def getById(id: Id): RIO[Any, Option[PaymentProcessor]] = paymentProcessorRepository.getById(id)
 
-      override def processing(paymentProcessor: PaymentProcessor, payment: Payment): ZIO[PaymentProcessorServiceEnvironment, Any, String] = ???
+        override def get(bankAccountId: Id, name: String): RIO[Any, Option[PaymentProcessor]] = paymentProcessorRepository.get(bankAccountId, name)
 
-      override def get(bankId: Id, name: String): ZIO[PaymentProcessorServiceEnvironment, Throwable, PaymentProcessor] = ???
+        def processing(paymentId: Id): RIO[Any, Option[String]] = ???
+      }
     }
+
   }
 
+  type LiveDependencies = PaymentProcessorRepository with PaymentService with  BankAccountService  with BankService with  PartnerService with PartnerBankAccountService with CurrencyService with UserService
+
+  def paypal: ZLayer[LiveDependencies, Throwable, Has[Service]] = ZLayer.fromServices[PaymentProcessorRepository.Service , PaymentService.Service,BankAccountService.Service,BankService.Service, PartnerService.Service ,PartnerBankAccountService.Service , CurrencyService.Service ,  UserService.Service, Service] {
+    ( paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService ) =>
+      PayPalPaymentProcessorServiceLive(paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService)
+  }
+
+  def stripe: ZLayer[LiveDependencies, Nothing, Has[Service]] = ZLayer.fromServices[PaymentProcessorRepository.Service , PaymentService.Service , BankAccountService.Service , BankService.Service, PartnerService.Service , PartnerBankAccountService.Service , CurrencyService.Service ,  UserService.Service, Service] {
+    (paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService) =>
+      StripePaymentProcessorServiceLive(paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService)
+  }
 }

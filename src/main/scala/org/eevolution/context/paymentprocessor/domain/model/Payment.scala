@@ -18,7 +18,7 @@ package org.eevolution.context.paymentprocessor.domain.model
 
 import java.time.Instant
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Amount, Button, Date, DateTime, Id, List, Number, Search, Table, TableDirect, YesNo}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Amount, Button, Date, DateTime, Id, List, Number, Search, Table, TableDirect, YesNo}
 import org.eevolution.context.paymentprocessor.domain.valueobject.{DocumentStatus, PaymentCreditCardType, PaymentTenderType, PaymentTrxType}
 
 /**
@@ -51,7 +51,7 @@ import org.eevolution.context.paymentprocessor.domain.valueobject.{DocumentStatu
   * @param campaignId
   * @param cashBookId
   * @param chargeId
-  * @param currencyTypeId
+  * @param conversionTypeId
   * @param currencyId
   * @param documentTypeId
   * @param chargeAmount
@@ -119,345 +119,31 @@ import org.eevolution.context.paymentprocessor.domain.valueobject.{DocumentStatu
   * @param voiceAuthorizationCode
   * @param writeOffAmt
   */
-case class Payment(paymentId: Id,
-                   uuid: String,
-                   tenantId: TableDirect,
-                   organizationId: TableDirect = 0,
-                   isActive: YesNo = true,
-                   created: DateTime = Instant.now,
-                   createdBy: Table,
-                   updated: DateTime = Instant.now,
-                   updatedBy: Table,
-                   accountNo: String,
-                   accountCity: String,
-                   accountCountry: String,
-                   trxOrganizationId: Table,
-                   accountEMail: String,
-                   driverLicense: String,
-                   socialSecurityNo: String,
-                   accountName: String,
-                   accountState: String,
-                   accountStreet: String,
-                   accountZipPostal: String,
-                   activityId: TableDirect,
-                   bankAccountId: TableDirect,
-                   partnerId: Search,
-                   partnerBankAccountId: TableDirect,
-                   campaignId: TableDirect,
-                   cashBookId: TableDirect,
-                   chargeId: TableDirect,
-                   currencyTypeId: TableDirect,
-                   currencyId: TableDirect,
-                   documentTypeId: TableDirect,
-                   chargeAmount: Amount,
-                   checkNo: String,
-                   invoiceId: Search,
-                   orderId: Search,
-                   paymentBatchId: TableDirect,
-                   posTerminalId: TableDirect,
-                   projectId: TableDirect,
-                   creditCardType: List = PaymentCreditCardType.MasterCard.value,
-                   creditCardExpMM: Int,
-                   creditCardExpYY: Int,
-                   creditCardNumber: String,
-                   creditCardVerificationCode: String,
-                   accountDate: Date,
-                   transactionDate: Date,
-                   description: String,
-                   discountAmount: Amount,
-                   documentAction: Button,
-                   documentStatus: List = DocumentStatus.Drafted.value,
-                   documentNo: String,
-                   isAllocated: YesNo = false,
-                   isApproved: YesNo = false,
-                   isDelayedCapture: YesNo = false,
-                   isOnlineAccess: YesNo = false,
-                   isOverUnderPayment: YesNo = false,
-                   isPrepayment: YesNo = false,
-                   isReceipt: YesNo = false,
-                   isReconciled: YesNo = false,
-                   isSelfService: YesNo = false,
-                   isUnidentifiedPayment: YesNo = false,
-                   micr: String,
-                   onlineProcessing: Button,
-                   originalTransactionId: String,
-                   overUnderPayment: Amount,
-                   paymentAmount: Amount,
-                   poNumber: String,
-                   posted: Button,
-                   processed: YesNo = false,
-                   processedOn: Number,
-                   processing: Button,
-                   authorizationCode: String,
-                   authorizationCodeDC: String,
-                   addressVerified: List,
-                   zipVerified: List,
-                   cvvMatch: YesNo = false,
-                   referencedPaymentId: Table,
-                   paymentRelatedId: Table,
-                   reversalId: Table,
-                   info: String,
-                   routingNo: String,
-                   reference: String,
-                   referenceDC: String,
-                   responseMessage: String,
-                   result: String,
-                   serviceContractId: TableDirect,
-                   swipe: String,
-                   taxAmount: Amount,
-                   tenderType: List = PaymentTenderType.Check.value,
-                   transactionType: List = PaymentTrxType.Sales.value,
-                   user1Id: Table,
-                   user2Id: Table,
-                   user3Id: Table,
-                   user4Id: Table,
-                   voiceAuthorizationCode: String,
-                   writeOffAmt: Amount)
-  extends DomainModel with ActiveEnabled
-    with Identifiable
-    with Traceable {
-  override type ActiveEnabled = this.type
-  override type Identifiable = this.type
-  override type Traceable = this.type
+case class Payment(paymentId: Id, uuid: Option[String], tenantId: TableDirect, organizationId: TableDirect , isActive: YesNo, created: DateTime, createdBy: Table, updated: DateTime, updatedBy: Table,
+                   accountNo: Option[String], accountCity: Option[String], accountCountry: Option[String], trxOrganizationId: Option[Table], accountEMail: Option[String], driverLicense:Option[String],
+                   socialSecurityNo: Option[String], accountName: Option[String], accountState: Option[String], accountStreet: Option[String], accountZipPostal: Option[String], activityId: Option[TableDirect],
+                   bankAccountId: Option[TableDirect], partnerId: Option[Search], partnerBankAccountId: Option[TableDirect], campaignId: Option[TableDirect], cashBookId: Option[TableDirect],
+                   chargeId: Option[TableDirect], conversionTypeId: Option[TableDirect], currencyId: TableDirect, documentTypeId: TableDirect, chargeAmount: Option[Amount], checkNo: Option[String],
+                   invoiceId: Option[Search], orderId: Option[Search], paymentBatchId: Option[TableDirect], posTerminalId: Option[TableDirect], projectId: Option[TableDirect],
+                   creditCardType: Option[List] = Option(PaymentCreditCardType.MasterCard.value), creditCardExpMM: Option[Id], creditCardExpYY: Option[Id], creditCardNumber: Option[String],
+                   creditCardVerificationCode: Option[String], accountDate: Date, transactionDate: Date, description: String, discountAmount: Amount, documentAction: Button, documentStatus: List = DocumentStatus.Drafted.value, documentNo: String, isAllocated: YesNo = false, isApproved: YesNo = false, isDelayedCapture: YesNo = false, isOnlineAccess: YesNo = false, isOverUnderPayment: YesNo = false, isPrepayment: YesNo = false, isReceipt: YesNo = false, isReconciled: YesNo = false, isSelfService: YesNo = false, isUnidentifiedPayment: YesNo = false, micr: String, onlineProcessing: Button, originalTransactionId: String, overUnderPayment: Amount, paymentAmount: Amount, poNumber: String, posted: Button, processed: YesNo = false, processedOn: Number, processing: Button, authorizationCode: String, authorizationCodeDC: String, addressVerified: List, zipVerified: List, cvvMatch: YesNo = false, referencedPaymentId: Table, paymentRelatedId: Table, reversalId: Table, info: String, routingNo: String, reference: String, referenceDC: String, responseMessage: String, result: String, serviceContractId: TableDirect, swipe: String, taxAmount: Amount, tenderType: List = PaymentTenderType.Check.value, transactionType: List = PaymentTrxType.Sales.value, user1Id: Table, user2Id: Table, user3Id: Table, user4Id: Table, voiceAuthorizationCode: String, writeOffAmt: Amount)
+  extends DomainModel
+    //with ActiveEnabled
+    //with Identifiable
+    //with Traceable
+{
+  //override type ActiveEnabled = this.type
+  //override type Identifiable = this.type
+  //override type Traceable = this.type
 
-  override def Id: Int = tenantId
+  //override def Id: Int = paymentId
 
-  override val entityName: String = "C_Bank"
-  override val identifier: String = "C_Bank_ID"
+  //override val entityName: String = "C_Payment"
+  //override val identifier: String = "C_Payment_ID"
 }
 
 object Payment {
-
-  val EntityName = "C_Bank_ID"
-  val BankId = "C_Bank_ID"
-  val TenantId = "AD_Client_ID"
-  val OrganizationId = "AD_Org_ID"
-  val IsActive = "IsActive"
-  val Created = "Created"
-  val CreatedBy = "CreatedBy"
-  val Updated = "Updated"
-  val UpdatedBy = "UpdatedBy"
-  val EntityId = "Ad_Table_ID"
-  val AcceptAMEX = "AcceptAMEX"
-  val AcceptATM = "AcceptATM"
-  val AcceptCheck = "AcceptCheck"
-  val AcceptCorporate = "AcceptATM"
-  val AcceptDiners = "AcceptDiners"
-  val AcceptDirectDebit = "AcceptDirectDebit"
-  val AcceptDirectDeposit = "AcceptDirectDeposit"
-  val AcceptDiscover = "AcceptDiscover"
-  val AcceptMC = "AcceptMC"
-  val AcceptVisa = "AcceptVisa"
-  val SequenceId = "AD_Sequence_ID"
-  val BankAccountId = "C_BankAccount_ID"
-  val CurrencyId = "C_Currency_ID"
-  val Commission = "Commission"
-  val CostPerTrx = "CostPerTrx"
-  val HostAddress = "HostAddress"
-  val HostPort = "HostPort"
-  val MinimumAmt = "MinimumAmt"
-  val PartnerId = "C_Partner_ID"
-  val Password = "Password"
-  val PayProcessorClass = "PayProcessorClass"
-  val ProxyAddress = "ProxyAddress"
-  val ProxyPassword = "ProxyPassword"
-  val ProxyPort = "ProxyPort"
-  val RequireVV = "RequireVV"
-  val UserId = "UserID"
-  val VendorId = "VendorID"
-  val Value = "Value"
-  val Name = "Name"
-  val UUID = "UUID"
-
-
-  def create(paymentId: Id,
-             uuid: String,
-             tenantId: TableDirect,
-             organizationId: TableDirect = 0,
-             isActive: YesNo = true,
-             created: DateTime = Instant.now,
-             createdBy: Table,
-             updated: DateTime = Instant.now,
-             updatedBy: Table,
-             accountNo: String,
-             accountCity: String,
-             accountCountry: String,
-             trxOrganizationId: Table,
-             accountEMail: String,
-             driverLicense: String,
-             socialSecurityNo: String,
-             accountName: String,
-             accountState: String,
-             accountStreet: String,
-             accountZipPostal: String,
-             activityId: TableDirect,
-             bankAccountId: TableDirect,
-             partnerId: Search,
-             partnerBankAccountId: TableDirect,
-             campaignId: TableDirect,
-             cashBookId: TableDirect,
-             chargeId: TableDirect,
-             currencyTypeId: TableDirect,
-             currencyId: TableDirect,
-             documentTypeId: TableDirect,
-             chargeAmount: Amount,
-             checkNo: String,
-             invoiceId: Search,
-             orderId: Search,
-             paymentBatchId: TableDirect,
-             posTerminalId: TableDirect,
-             projectId: TableDirect,
-             creditCardType: List,
-             creditCardExpMM: Int,
-             creditCardExpYY: Int,
-             creditCardNumber: String,
-             creditCardVerificationCode: String,
-             accountDate: Date,
-             transactionDate: Date,
-             description: String,
-             discountAmount: Amount,
-             documentAction: Button,
-             documentStatus: List,
-             documentNo: String,
-             isAllocated: YesNo = false,
-             isApproved: YesNo = false,
-             isDelayedCapture: YesNo = false,
-             isOnlineAccess: YesNo = false,
-             isOverUnderPayment: YesNo = true,
-             isPrepayment: YesNo = false,
-             isReceipt: YesNo = false,
-             isReconciled: YesNo = false,
-             isSelfService: YesNo = false,
-             isUnidentifiedPayment: YesNo = false,
-             micr: String,
-             onlineProcessing: Button,
-             originalTransactionId: String,
-             overUnderPayment: Amount,
-             paymentAmount: Amount,
-             poNumber: String,
-             posted: Button,
-             processed: YesNo = false,
-             processedOn: Number,
-             processing: Button,
-             authorizationCode: String,
-             authorizationCodeDC: String,
-             addressVerified: List,
-             zipVerified: List,
-             cvvMatch: YesNo = false,
-             referencedPaymentId: Table,
-             paymentRelatedId: Table,
-             reversalId: Table,
-             info: String,
-             routingNo: String,
-             reference: String,
-             referenceDC: String,
-             responseMessage: String,
-             result: String,
-             serviceContractId: TableDirect,
-             swipe: String,
-             taxAmount: Amount,
-             tenderType: List,
-             transactionType: List = PaymentTrxType.Sales.value,
-             user1Id: Table,
-             user2Id: Table,
-             user3Id: Table,
-             user4Id: Table,
-             voiceAuthorizationCode: String,
-             writeOffAmt: Amount
-            ): Payment = Payment(
-    0,
-    uuid,
-    tenantId,
-    organizationId,
-    isActive,
-    created,
-    createdBy,
-    updated,
-    updatedBy,
-    accountNo,
-    accountCity,
-    accountCountry,
-    trxOrganizationId,
-    accountEMail,
-    driverLicense,
-    socialSecurityNo,
-    accountName,
-    accountState,
-    accountStreet,
-    accountZipPostal,
-    activityId,
-    bankAccountId,
-    partnerId,
-    partnerBankAccountId,
-    campaignId,
-    cashBookId,
-    chargeId,
-    currencyTypeId,
-    currencyId,
-    documentTypeId,
-    chargeAmount,
-    checkNo,
-    invoiceId,
-    orderId,
-    paymentBatchId,
-    posTerminalId,
-    projectId,
-    creditCardType,
-    creditCardExpMM,
-    creditCardExpYY,
-    creditCardNumber,
-    creditCardVerificationCode,
-    accountDate,
-    transactionDate,
-    description,
-    discountAmount,
-    documentAction,
-    documentStatus,
-    documentNo,
-    isAllocated,
-    isApproved,
-    isDelayedCapture,
-    isOnlineAccess,
-    isOverUnderPayment,
-    isPrepayment,
-    isReceipt,
-    isReconciled,
-    isSelfService,
-    isUnidentifiedPayment,
-    micr,
-    onlineProcessing,
-    originalTransactionId,
-    overUnderPayment,
-    paymentAmount,
-    poNumber,
-    posted,
-    processed,
-    processedOn,
-    processing,
-    authorizationCode,
-    authorizationCodeDC,
-    addressVerified,
-    zipVerified,
-    cvvMatch,
-    referencedPaymentId,
-    paymentRelatedId,
-    reversalId,
-    info,
-    routingNo,
-    reference,
-    referenceDC,
-    responseMessage,
-    result,
-    serviceContractId,
-    swipe,
-    taxAmount,
-    tenderType,
-    transactionType,
-    user1Id,
-    user2Id,
-    user3Id,
-    user4Id,
-    voiceAuthorizationCode,
-    writeOffAmt
-  )
+  def create(paymentId: Id, uuid: String, tenantId: TableDirect, organizationId: TableDirect , isActive: YesNo , created: DateTime, createdBy: Table, updated: DateTime, updatedBy: Table, accountNo: String, accountCity: String, accountCountry: String, trxOrganizationId: Table, accountEMail: String, driverLicense: String, socialSecurityNo: String, accountName: String, accountState: String, accountStreet: String, accountZipPostal: String, activityId: TableDirect, bankAccountId: TableDirect, partnerId: Search, partnerBankAccountId: TableDirect, campaignId: TableDirect, cashBookId: TableDirect, chargeId: TableDirect, conversionTypeId: TableDirect, currencyId: TableDirect, documentTypeId: TableDirect, chargeAmount: Amount, checkNo: String, invoiceId: Search, orderId: Search, paymentBatchId: TableDirect, posTerminalId: TableDirect, projectId: TableDirect, creditCardType: List, creditCardExpMM: Id, creditCardExpYY: Id, creditCardNumber: String, creditCardVerificationCode: String, accountDate: Date, transactionDate: Date, description: String, discountAmount: Amount, documentAction: Button, documentStatus: List, documentNo: String, isAllocated: YesNo = false, isApproved: YesNo = false, isDelayedCapture: YesNo = false, isOnlineAccess: YesNo = false, isOverUnderPayment: YesNo = true, isPrepayment: YesNo = false, isReceipt: YesNo = false, isReconciled: YesNo = false, isSelfService: YesNo = false, isUnidentifiedPayment: YesNo = false, micr: String, onlineProcessing: Button, originalTransactionId: String, overUnderPayment: Amount, paymentAmount: Amount, poNumber: String, posted: Button, processed: YesNo = false, processedOn: Number, processing: Button, authorizationCode: String, authorizationCodeDC: String, addressVerified: List, zipVerified: List, cvvMatch: YesNo = false, referencedPaymentId: Table, paymentRelatedId: Table, reversalId: Table, info: String, routingNo: String, reference: String, referenceDC: String, responseMessage: String, result: String, serviceContractId: TableDirect, swipe: String, taxAmount: Amount, tenderType: List, transactionType: List = PaymentTrxType.Sales.value, user1Id: Table, user2Id: Table, user3Id: Table, user4Id: Table, voiceAuthorizationCode: String, writeOffAmt: Amount): Payment =
+    Payment(paymentId, uuid, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, accountNo, accountCity, accountCountry, trxOrganizationId, accountEMail, driverLicense, socialSecurityNo, accountName, accountState, accountStreet, accountZipPostal, activityId, bankAccountId, partnerId, partnerBankAccountId, campaignId, cashBookId, chargeId, conversionTypeId, currencyId, documentTypeId, chargeAmount, checkNo, invoiceId, orderId, paymentBatchId, posTerminalId, projectId, creditCardType, creditCardExpMM, creditCardExpYY, creditCardNumber, creditCardVerificationCode, accountDate, transactionDate, description, discountAmount, documentAction, documentStatus, documentNo, isAllocated, isApproved, isDelayedCapture, isOnlineAccess, isOverUnderPayment, isPrepayment, isReceipt, isReconciled, isSelfService, isUnidentifiedPayment, micr, onlineProcessing, originalTransactionId, overUnderPayment, paymentAmount, poNumber, posted, processed, processedOn, processing, authorizationCode, authorizationCodeDC, addressVerified, zipVerified, cvvMatch, referencedPaymentId, paymentRelatedId, reversalId, info, routingNo, reference, referenceDC, responseMessage, result, serviceContractId, swipe, taxAmount, tenderType, transactionType, user1Id, user2Id, user3Id, user4Id, voiceAuthorizationCode, writeOffAmt
+    )
 }

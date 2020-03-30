@@ -24,7 +24,8 @@ import org.eevolution.context.paymentprocessor.infrastructure.database.context._
   */
 trait BankAccountMapping {
   val quoteBankAccount = quote {
-    querySchema[BankAccount]("C_BankAccount_ID",
+    querySchema[BankAccount]("C_BankAccount",
+      _.bankAccountId -> "C_BankAccount_ID",
       _.bankId -> "C_Bank_ID",
       _.tenantId -> "AD_Client_ID",
       _.organizationId -> "AD_Org_ID",

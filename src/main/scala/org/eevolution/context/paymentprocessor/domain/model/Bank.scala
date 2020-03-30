@@ -30,7 +30,6 @@ import java.time.Instant
   * @param createdBy
   * @param updated
   * @param updatedBy
-  * @param value
   * @param name
   * @param bankType
   * @param partnerId
@@ -49,7 +48,6 @@ case class Bank(bankId: Int,
                 createdBy: Int,
                 updated: Instant = Instant.now,
                 updatedBy: Int,
-                value: String,
                 name: String,
                 bankType: String,
                 partnerId: Int,
@@ -83,7 +81,6 @@ object Bank {
              createdBy: Int,
              updated: Instant = Instant.now,
              updatedBy: Int,
-             value: String,
              name: String,
              bankType: String,
              partnerId: Int,
@@ -103,7 +100,6 @@ object Bank {
       createdBy,
       updated,
       updatedBy,
-      value,
       name,
       bankType,
       partnerId,

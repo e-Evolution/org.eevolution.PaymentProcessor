@@ -19,7 +19,7 @@ package org.eevolution.context.paymentprocessor.domain.model
 
 import java.time.Instant
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{DateTime, Id, Table, TableDirect, YesNo}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, Table, TableDirect, YesNo}
 
 /**
   * Bank Account Entity

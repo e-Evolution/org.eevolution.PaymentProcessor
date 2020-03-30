@@ -14,36 +14,27 @@
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
 
+
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Currency, Id}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
 import org.eevolution.context.paymentprocessor.api.repository.CurrencyRepository
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.CurrencyRepository.CurrencyRepository
+import org.eevolution.context.paymentprocessor.domain.service.CurrencyServiceLive
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Currency, Id}
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * API Trait Domain Organization Service
-  */
-trait CurrencyService {
-  def currencyService : CurrencyService.Service
-}
-
-/**
-  * API Singleton Object Domain Organization Service
+  * Standard Implementation for Domain Bank Account Service
   */
 object CurrencyService {
 
-  type CurrencyServiceEnvironment = CurrencyRepository with ContextEnvironment
+
+
+  type CurrencyService = Has[CurrencyService.Service]
 
   trait Service {
-    def getById(id: Id): ZIO[CurrencyServiceEnvironment, Throwable, Currency]
+    def getById(currencyId: Id): RIO[Any, Option[Currency]]
   }
 
-  trait Live extends CurrencyService
-
-  object Live extends Live {
-    def currencyService: CurrencyService.Service = new Service {
-      override def getById(id: Id): ZIO[CurrencyServiceEnvironment, Throwable, Currency] = ???
-    }
-  }
+  def live: ZLayer[CurrencyRepository, Nothing, Has[Service]] = ZLayer.fromService[CurrencyRepository.Service, Service] { currencyRepository => CurrencyServiceLive(currencyRepository)} //ZLayer.fromServices[Context.Service, CurrencyRepository.Service, Service] { (contextService, currencyRepository) =>CurrencyServiceLive(contextService, currencyRepository)}
 }

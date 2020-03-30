@@ -16,13 +16,22 @@
 
 package org.eevolution.context.paymentprocessor.infrastructure
 
+import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import io.getquill.{Literal, PostgresJdbcContext}
 
 /**
   * Package for Database Access
   */
 package object database {
-  lazy val context = new PostgresJdbcContext(Literal, "ctx") with Encoders with Decoders
+  val pgDataSource = new org.postgresql.ds.PGSimpleDataSource()
+  pgDataSource.setUser("adempiere")
+  pgDataSource.setPassword("adempiere")
+  pgDataSource.setPortNumber(55432)
+  pgDataSource.setServerName("0.0.0.0")
+  val config = new HikariConfig()
+  config.setDataSource(pgDataSource)
+
+  lazy val context = new PostgresJdbcContext(Literal, new HikariDataSource(config)) with Encoders with Decoders
 }
 
 

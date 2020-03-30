@@ -33,8 +33,14 @@ trait BankMapping {
       _.createdBy -> "CreatedBy",
       _.updated -> "Updated",
       _.updatedBy -> "UpdatedBy",
-      _.value -> "Value",
       _.name -> "Name",
+      _.bankType -> "BankType",
+      _.partnerId -> "C_BPartner_ID",
+      _.locationId -> "C_Location_ID",
+      _.description-> "Description",
+      _.isOwnBank -> "IsOwnBank",
+      _.routingNo -> "RoutingNo",
+      _.swiftCode -> "SwiftCode",
       _.uuid -> "UUID")
   )
 }

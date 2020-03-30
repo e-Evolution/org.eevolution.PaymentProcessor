@@ -18,7 +18,7 @@ package org.eevolution.context.paymentprocessor.domain.model
 
 import java.time.Instant
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage._
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
 
 /**
   * User Entity

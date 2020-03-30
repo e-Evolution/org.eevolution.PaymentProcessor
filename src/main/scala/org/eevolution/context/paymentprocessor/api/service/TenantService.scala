@@ -14,37 +14,29 @@
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
 
+
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Tenant}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
+
 import org.eevolution.context.paymentprocessor.api.repository.TenantRepository
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.TenantRepository.TenantRepository
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, Tenant}
+import zio.{Has, Task, ZLayer}
 
 /**
-  * API Trait Domain Tenant Service
-  */
-trait TenantService {
-  def tenantService: TenantService.Service
-}
-
-/**
-  * API Singleton Object Domain Tenant Service
+  * Standard Implementation for Domain Tenant Service
   */
 object TenantService {
 
-  type TenantServiceEnvironment = TenantRepository with ContextEnvironment
+   type TenantService = Has[TenantService.Service]
+
 
   trait Service {
-    def getById(id: Id): ZIO[TenantServiceEnvironment, Throwable, Tenant]
+    def getById(id: Id): Task[Option[Tenant]]
   }
-
-  trait Live extends TenantService
-
-  object Live extends TenantService.Live {
-    def tenantService: TenantService.Service = new Service {
-      override def getById(id: Id): ZIO[TenantServiceEnvironment, Throwable, Tenant] = ???
-    }
+   def live : ZLayer[TenantRepository, Nothing, Has[Service]]  =   ZLayer.fromService[TenantRepository.Service, Service] {  tenantRepository =>
+     new Service {
+       override def getById(id: Id) : Task[Option[Tenant]] = tenantRepository.getById(id) //tenantRepository.get.getById(id)
+     }
   }
-
 }

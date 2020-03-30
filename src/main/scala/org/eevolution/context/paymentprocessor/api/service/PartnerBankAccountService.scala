@@ -17,42 +17,31 @@
 
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, PartnerBankAccount}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
 import org.eevolution.context.paymentprocessor.api.repository.PartnerBankAccountRepository
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.PartnerBankAccountRepository.PartnerBankAccountRepository
+import org.eevolution.context.paymentprocessor.domain.service.PartnerBankAccountServiceLive
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, PartnerBankAccount}
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * API Trait Domain Bank Account Service
+  * Standard Implementation for Domain Bank Account Service
   */
-trait PartnerBankAccountService {
-  def partnerBankAccountService: PartnerBankAccountService.Service
-}
-
-/**
-  * API Singleton Object Domain Bank Account Service
-  */
-
 object PartnerBankAccountService {
 
-  type PartnerBankAccountServiceEnvironment =  PartnerBankAccountRepository with ContextEnvironment
+
+  type PartnerBankAccountService = Has[Service]
 
   trait Service {
-    def getById(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String): ZIO[PartnerBankAccountServiceEnvironment, Any, PartnerBankAccount]
-    def create(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String, creditCardType: String, creditCardNumber: String, creditCardExpMM: Int, creditCardExpYY: Int, creditCardVV: String): ZIO[PartnerBankAccountServiceEnvironment, Any, PartnerBankAccount]
-    def save(partnerBankAccount: PartnerBankAccount) :  ZIO[PartnerBankAccountServiceEnvironment, Throwable, PartnerBankAccount]
+
+    def getById(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String): RIO[Any, Option[PartnerBankAccount]]
+
+    def create(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String, creditCardType: String, creditCardNumber: String, creditCardExpMM: Int, creditCardExpYY: Int, creditCardVV: String): RIO[Any, Option[PartnerBankAccount]]
+
+    def save(partnerBankAccount: PartnerBankAccount): RIO[Any,Option[ PartnerBankAccount]]
   }
 
-  trait Live extends PartnerBankAccountService
 
-  object Live extends Live {
-    def partnerBankAccountService: PartnerBankAccountService.Service = new Service {
-      override def getById(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String): ZIO[PartnerBankAccountServiceEnvironment, Any, PartnerBankAccount] = ???
-
-      override def create(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String, creditCardType: String, creditCardNumber: String, creditCardExpMM: Int, creditCardExpYY: Int, creditCardVV: String): ZIO[PartnerBankAccountServiceEnvironment, Any, PartnerBankAccount] = ???
-
-      override def save(partnerBankAccount: PartnerBankAccount): ZIO[PartnerBankAccountServiceEnvironment, Throwable, PartnerBankAccount] = ???
-    }
-  }
+  def live: ZLayer[ PartnerBankAccountRepository, Throwable, Has[Service]] =  ZLayer.fromService[PartnerBankAccountRepository.Service, Service] {  (partnerBankAccountRepository) => PartnerBankAccountServiceLive(partnerBankAccountRepository)}
+  //ZLayer.fromServices[Context.Service, PartnerBankAccountRepository.Service, Service] { (contextService, partnerBankAccountRepository) =>PartnerBankAccountServiceLive(contextService, partnerBankAccountRepository)}
 
 }

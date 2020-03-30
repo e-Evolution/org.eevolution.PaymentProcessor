@@ -14,38 +14,26 @@
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
 
-
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{DocumentType, Id}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
+import org.eevolution.context.paymentprocessor.api.Context.Context
 import org.eevolution.context.paymentprocessor.api.repository.DocumentTypeRepository
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.DocumentTypeRepository.DocumentTypeRepository
+import org.eevolution.context.paymentprocessor.domain.service.DocumentTypeServiceLive
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DocumentType, Id}
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * API Domain Document Type Service
-  */
-trait DocumentTypeService {
-  def documentTypeService: DocumentTypeService.Service
-}
-
-/**
-  * API Singleton Object Domain Document type Service
+  * Standard Implementation for Domain Document Type Service
   */
 object DocumentTypeService {
 
-  type DocumentTypeServiceEnvironment = DocumentTypeRepository with ContextEnvironment
+  type DocumentTypeService = Has[DocumentTypeService.Service]
 
   trait Service {
-    def getById(id: Id): ZIO[DocumentTypeServiceEnvironment, Throwable, DocumentType]
+    def getById(id: Id): RIO[Context, Option[DocumentType]]
   }
 
-  trait Live extends DocumentTypeService
-
-  object Live extends DocumentTypeService.Live {
-    def documentTypeService: DocumentTypeService.Service = new Service {
-      override def getById(id: Id): ZIO[DocumentTypeServiceEnvironment, Throwable, DocumentType] = ???
-    }
-  }
-
+  def live : ZLayer[DocumentTypeRepository, Throwable, Has[Service]]  = ZLayer.fromService[DocumentTypeRepository.Service, Service] {   (documentTypeRepository ) => DocumentTypeServiceLive(documentTypeRepository )}
+  //ZLayer.fromServices[Context.Service , DocumentTypeRepository.Service, Service] {   (context , documentTypeRepository ) =>DocumentTypeServiceLive(context , documentTypeRepository )}
 }

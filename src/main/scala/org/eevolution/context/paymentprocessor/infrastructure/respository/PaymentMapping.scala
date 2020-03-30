@@ -16,6 +16,7 @@
 
 package org.eevolution.context.paymentprocessor.infrastructure.respository
 
+
 import org.eevolution.context.paymentprocessor.domain.model.Payment
 import org.eevolution.context.paymentprocessor.infrastructure.database.context._
 
@@ -23,8 +24,10 @@ import org.eevolution.context.paymentprocessor.infrastructure.database.context._
   * Payment Mapping with Database
   */
 trait PaymentMapping {
-  val quotePayment = quote {
-    querySchema[Payment]("C_Payment_ID",
+  def quotePayment = quote {
+    querySchema[Payment]("C_Payment",
+      _.paymentId -> "C_Payment_ID",
+      _.uuid -> "UUID" ,
       _.tenantId -> "AD_Client_ID",
       _.organizationId -> "AD_Org_ID",
       _.isActive -> "IsActive",
@@ -32,7 +35,6 @@ trait PaymentMapping {
       _.createdBy -> "CreatedBy",
       _.updated -> "Updated",
       _.updatedBy -> "UpdatedBy",
-      _.uuid -> "UUID",
       _.accountNo -> "AccountNo",
       _.accountCity -> "A_City",
       _.accountCountry -> "A_Country",
@@ -51,10 +53,10 @@ trait PaymentMapping {
       _.campaignId -> "C_Campaign_ID",
       _.cashBookId -> "C_CashBook_ID",
       _.chargeId -> "C_Charge_ID",
-      _.currencyTypeId -> "C_CurrencyType_ID",
+      _.conversionTypeId -> "C_ConversionType_ID",
       _.currencyId -> "C_Currency_ID",
-      _.documentTypeId -> "C_DocumentType_ID",
-      _.chargeAmount -> "ChargeAmount",
+      _.documentTypeId -> "C_DocType_ID",
+      _.chargeAmount -> "ChargeAmt",
       _.checkNo -> "CheckNo",
       _.invoiceId -> "C_Invoice_ID",
       _.orderId -> "C_Order_ID",
@@ -66,8 +68,8 @@ trait PaymentMapping {
       _.creditCardNumber -> "CreditCardNumber",
       _.creditCardType -> "CreditCardType",
       _.creditCardVerificationCode -> "CreditCardVV",
-      _.accountDate -> "AccountDate",
-      _.transactionDate -> "TransactionDate",
+      _.accountDate -> "DateAcct",
+      _.transactionDate -> "DateTrx",
       _.description -> "Description",
       _.discountAmount -> "DiscountAmt",
       _.documentAction -> "DocAction",
@@ -76,7 +78,7 @@ trait PaymentMapping {
       _.isAllocated -> "IsAllocated",
       _.isApproved -> "IsApproved",
       _.isDelayedCapture -> "IsDelayedCapture",
-      _.isOnlineAccess -> "IsOnlineAccess",
+      _.isOnlineAccess -> "IsOnline",
       _.isOverUnderPayment -> "IsOverUnderPayment",
       _.isPrepayment -> "IsPrepayment",
       _.isReceipt -> "IsReceipt",
@@ -117,7 +119,7 @@ trait PaymentMapping {
       _.user3Id -> "User3_ID",
       _.user4Id -> "User4_ID",
       _.voiceAuthorizationCode -> "VoiceAuthCode",
-      _.writeOffAmt -> "writeOffAmt"
+      _.writeOffAmt -> "WriteOffAmt"
     )
   }
 }

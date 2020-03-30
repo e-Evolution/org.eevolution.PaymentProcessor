@@ -24,7 +24,8 @@ import org.eevolution.context.paymentprocessor.infrastructure.database.context._
   */
 trait PaymentProcessorMapping {
   val quotePaymentProcessor = quote {
-    querySchema[PaymentProcessor]("C_PaymentProcessor_ID",
+    querySchema[PaymentProcessor]("C_PaymentProcessor",
+      _.paymentProcessorId -> "C_PaymentProcessor_ID",
       _.tenantId -> "AD_Client_ID",
       _.organizationId -> "AD_Org_ID",
       _.isActive -> "IsActive",
@@ -50,7 +51,7 @@ trait PaymentProcessorMapping {
       _.hostAddress -> "HostAddress",
       _.hostPort -> "HostPort",
       _.minimumAmt -> "MinimumAmt",
-      _.partnerId -> "C_Partner_ID",
+      _.partnerId -> "PartnerID",
       _.password -> "Password",
       _.payProcessorClass -> "PayProcessorClass",
       _.proxyAddress -> "ProxyAddress",
@@ -59,7 +60,6 @@ trait PaymentProcessorMapping {
       _.requireVV -> "RequireVV",
       _.userId -> "UserID",
       _.vendorId -> "VendorID",
-      _.value -> "Value",
       _.name -> "Name",
       _.description -> "Description",
       _.uuid -> "UUID")

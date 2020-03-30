@@ -19,10 +19,10 @@ package org.eevolution.context.paymentprocessor.domain.factory
 
 import java.time.Instant
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage._
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
-import org.eevolution.context.paymentprocessor.domain.model.User
-import zio.ZIO
+import org.compiere.util.Env
+import org.eevolution.context.paymentprocessor.domain
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
+import zio.Task
 
 object UserBuilder {
 
@@ -89,19 +89,18 @@ object UserBuilder {
     Description <: WithDescriptionTracking : IsOnce,
     Email <: WithEmailTracking : IsOnce,
     Password <: WithPasswordTracking : IsOnce
-  ](): ZIO[ContextEnvironment, Any, User] = ZIO.accessM {
-    environment =>
+  ](): Task[Option[User]] =  {
       for {
-        tenant <- environment.execution.getTenant
-        organization <- environment.execution.getOrganization
-        user <- environment.execution.getUser
-        name <- ZIO.fromOption(maybeName)
-        partnerId <- ZIO.fromOption(maybePartnerId)
-        description <- ZIO.fromOption(maybeDescription)
-        email <- ZIO.fromOption(maybeEmail)
-        password <- ZIO.fromOption(maybePassword)
-        user <- ZIO.effectTotal(
-        User.create(0, partnerId , tenant.tenantId , organization.organizationId, true, Instant.now() ,user.userId , Instant.now() , user.userId,name,description,email,password, null ))
+        //tenant <- environment.get[Has[Context]].get.get.getTenant
+        //organization <- environment.get[Has[Context]].get.get.getOrganization
+        //user <- environment.get[Has[Context.Service]].get.get.getUser
+        name <- Task(maybeName.get)
+        partnerId <- Task(maybePartnerId.get)
+        description <- Task(maybeDescription.get)
+        email <- Task(maybeEmail.get)
+        password <- Task(maybePassword.get)
+        user <- Task(
+        Option(domain.model.User.create(0, partnerId ,Env.getAD_Client_ID(Env.getCtx), 0, true, Instant.now() ,Env.getAD_User_ID(Env.getCtx) , Instant.now() ,Env.getAD_User_ID(Env.getCtx),name,description,email,password, null )))
       } yield user
   }
 }

@@ -25,7 +25,7 @@ import org.eevolution.context.paymentprocessor.infrastructure.database.context._
 trait UserMapping {
   def quoteUser = quote(
     querySchema[User]("AD_User",
-      _.userId -> "C_Bank_ID",
+      _.userId -> "AD_User_ID",
       _.tenantId -> "AD_Client_ID",
       _.organizationId -> "AD_Org_ID",
       _.isActive -> "IsActive",
@@ -37,6 +37,7 @@ trait UserMapping {
       _.email -> "email",
       _.password -> "Password",
       _.description -> "Description",
+      _.partnerId -> "C_BPartner_ID",
       _.uuid -> "UUID")
   )
 }

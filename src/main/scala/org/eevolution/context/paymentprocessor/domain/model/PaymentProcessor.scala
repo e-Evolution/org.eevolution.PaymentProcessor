@@ -97,7 +97,6 @@ case class PaymentProcessor(paymentProcessorId: Int,
                             requireVV: String,
                             userId: String,
                             vendorId: String,
-                            value: String,
                             name: String,
                             description: String
                            )
@@ -110,53 +109,11 @@ case class PaymentProcessor(paymentProcessorId: Int,
 
   override def Id: Int = tenantId
 
-  override val entityName: String = "C_Bank"
-  override val identifier: String = "C_Bank_ID"
+  override val entityName: String = "C_PaymentProcessor"
+  override val identifier: String = "C_PaymentProcessorC_PaymentProcessor"
 }
 
 object PaymentProcessor {
-
-  val EntityName = "C_Bank_ID"
-  val BankId = "C_Bank_ID"
-  val TenantId = "AD_Client_ID"
-  val OrganizationId = "AD_Org_ID"
-  val IsActive = "IsActive"
-  val Created = "Created"
-  val CreatedBy = "CreatedBy"
-  val Updated = "Updated"
-  val UpdatedBy = "UpdatedBy"
-  val EntityId = "Ad_Table_ID"
-  val AcceptAMEX = "AcceptAMEX"
-  val AcceptATM = "AcceptATM"
-  val AcceptCheck = "AcceptCheck"
-  val AcceptCorporate = "AcceptATM"
-  val AcceptDiners = "AcceptDiners"
-  val AcceptDirectDebit = "AcceptDirectDebit"
-  val AcceptDirectDeposit = "AcceptDirectDeposit"
-  val AcceptDiscover = "AcceptDiscover"
-  val AcceptMC = "AcceptMC"
-  val AcceptVisa = "AcceptVisa"
-  val SequenceId = "AD_Sequence_ID"
-  val BankAccountId = "C_BankAccount_ID"
-  val CurrencyId = "C_Currency_ID"
-  val Commission = "Commission"
-  val CostPerTrx = "CostPerTrx"
-  val HostAddress = "HostAddress"
-  val HostPort = "HostPort"
-  val MinimumAmt = "MinimumAmt"
-  val PartnerId = "C_Partner_ID"
-  val Password = "Password"
-  val PayProcessorClass = "PayProcessorClass"
-  val ProxyAddress = "ProxyAddress"
-  val ProxyPassword = "ProxyPassword"
-  val ProxyPort = "ProxyPort"
-  val RequireVV = "RequireVV"
-  val UserId = "UserID"
-  val VendorId = "VendorID"
-  val Value = "Value"
-  val Name = "Name"
-  val UUID = "UUID"
-
 
   def create(paymentProcessorId: Int,
              uuid: String,
@@ -194,7 +151,6 @@ object PaymentProcessor {
              requireVV: String,
              userId: String,
              vendorId: String,
-             value: String,
              name: String,
              description: String
             ): PaymentProcessor =
@@ -235,7 +191,6 @@ object PaymentProcessor {
       requireVV,
       userId,
       vendorId,
-      value,
       name,
       description
     )

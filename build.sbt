@@ -29,10 +29,18 @@ lazy val commonSettings = Seq(
 scalaVersion := "2.13.1"
 libraryDependencies ++= Seq(
   "com.stripe" % "stripe-java" % "18.7.0",
-  "dev.zio" %% "zio" % "1.0.0-RC18",
+  "dev.zio" %% "zio" % "1.0.0-RC18-2",
+  "dev.zio" %% "zio-test"     % "1.0.0-RC18-2" % "test",
+  "dev.zio" %% "zio-test-sbt" % "1.0.0-RC18-2" % "test",
   "io.getquill" %% "quill-jdbc" % "3.5.0",
   "org.postgresql" % "postgresql" % "42.2.8"
 )
+
+libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
+libraryDependencies += "org.slf4j" % "slf4j-jdk14" % "1.7.21"
+libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.21"
+
+testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
 
 ThisBuild / useCoursier := false
 ThisBuild / turbo := true

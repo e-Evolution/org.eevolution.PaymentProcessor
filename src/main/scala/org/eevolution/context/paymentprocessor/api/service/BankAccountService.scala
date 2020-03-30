@@ -17,36 +17,26 @@
 
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{BankAccount, Id}
+import org.eevolution.context.paymentprocessor.api.Context
+import org.eevolution.context.paymentprocessor.api.Context.Context
 import org.eevolution.context.paymentprocessor.api.repository.BankAccountRepository
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.BankAccountRepository.BankAccountRepository
+import org.eevolution.context.paymentprocessor.domain.service.BankAccountServiceLive
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{BankAccount, Id}
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * API Trait Domain Bank Account Service
+  * Standard Implementation for Domain Bank Account Service
   */
-trait BankAccountService {
-  def bankAccountService: BankAccountService.Service
-}
-
-/**
-  * API Singleton Object Domain Bank Account Service
-  */
-
 object BankAccountService {
 
-  type BankAccountServiceEnvironment =  BankAccountRepository with ContextEnvironment
+  type BankAccountService = Has[Service]
 
   trait Service {
-    def getById(id: Id): ZIO[BankAccountServiceEnvironment, Throwable, BankAccount]
+    def getById(id: Id): RIO[Any, Option[BankAccount]]
   }
 
-  trait Live extends BankAccountService
-
-  object Live extends Live {
-    def bankAccountService: BankAccountService.Service = new Service {
-      override def getById(id: Id): ZIO[BankAccountServiceEnvironment, Throwable, BankAccount] = ???
-    }
+  def live : ZLayer[BankAccountRepository, Nothing, Has[Service]] =   ZLayer.fromService[BankAccountRepository.Service, Service] {  bankAccountRepositoryService =>
+    BankAccountServiceLive (bankAccountRepositoryService)
   }
-
 }

@@ -32,14 +32,12 @@ import java.time.Instant
   * @param value                          Value
   * @param name                           Name
   * @param description                    Description
-  * @param smtpHost                       Sm Tp Host
   * @param requestEmail                   Request Email
   * @param requestUser                    Request User
   * @param requestUserPW                  Request User Pw
   * @param requestFolder                  Request Folder
   * @param language                       Language
   * @param isMultilingualDocument         Is Multilingual Document
-  * @param isSMTPAuthorization            Is Sm Tp Authorization
   * @param isUseBetaFunctions             Is Use Beta Functions
   * @param ldapQuery                      LDAP Query
   * @param modelValidationClasses         modelValidationClasses
@@ -60,45 +58,7 @@ import java.time.Instant
   * @param replicationStrategyId          Replication Strategy ID
   * @param emailConfigId                  Email Config ID
   */
-case class Tenant(tenantId: Int,
-                  organizationId: Int = 0,
-                  isActive: Boolean = true,
-                  created: Instant = Instant.now,
-                  createdBy: Int,
-                  updated: Instant = Instant.now,
-                  updatedBy: Int,
-                  value: String,
-                  name: String,
-                  description: Option[String],
-                  smtpHost: Option[String],
-                  requestEmail: Option[String],
-                  requestUser: Option[String],
-                  requestUserPW: Option[String],
-                  requestFolder: Option[String],
-                  language: Option[String],
-                  isMultilingualDocument: Boolean = false,
-                  isSMTPAuthorization: Boolean = false,
-                  isUseBetaFunctions: Boolean = false,
-                  ldapQuery: Option[String],
-                  modelValidationClasses: Option[String],
-                  isAutoArchive: Boolean = false,
-                  mmPolicy: String = "F",
-                  emailTest: Option[String],
-                  isServerEmail: Boolean = false,
-                  documentDir: Option[String],
-                  isPostImmediate: Boolean = false,
-                  isCostImmediate: Boolean = false,
-                  isStoreAttachmentsOnFileSystem: Boolean = false,
-                  windowsAttachmentPath: Option[String],
-                  unixAttachmentPath: Option[String],
-                  isStoreArchiveOnFileSystem: Boolean = false,
-                  windowsArchivePath: Option[String],
-                  unixArchivePath: Option[String],
-                  isUseASP: Boolean = false,
-                  replicationStrategyId: Option[Int],
-                  emailConfigId: Option[Int],
-                  uuid: String
-                 ) extends DomainModel
+case class Tenant(tenantId: Int, organizationId: Int = 0, isActive: Boolean = true, created: Instant = Instant.now, createdBy: Int, updated: Instant = Instant.now, updatedBy: Int, value: String, name: String, description: String, requestEmail: String, requestUser: String, requestUserPW: String, requestFolder: String, language: String, isMultilingualDocument: Boolean = false, isUseBetaFunctions: Boolean = false, ldapQuery: String, modelValidationClasses: String, isAutoArchive: Boolean = false, mmPolicy: String = "F", emailTest: Boolean, isServerEmail: Boolean = false, documentDir: String, isPostImmediate: Boolean = false, isCostImmediate: Boolean = false, isStoreAttachmentsOnFileSystem: Boolean = false, windowsAttachmentPath: String, unixAttachmentPath: String, isStoreArchiveOnFileSystem: Boolean = false, windowsArchivePath: String, unixArchivePath: String, isUseASP: Boolean = false, replicationStrategyId: Int, emailConfigId: Int, uuid: String) extends DomainModel
 
   with ActiveEnabled
   with Identifiable
@@ -125,14 +85,12 @@ object Tenant {
              value: String,
              name: String,
              description: String,
-             smtpHost: String,
              requestEmail: String,
              requestUser: String,
              requestUserPW: String,
              requestFolder: String,
              language: String,
              isMultilingualDocument: Boolean,
-             isSMTPAuthorization: Boolean,
              isUseBetaFunctions: Boolean,
              ldapQuery: String,
              modelValidationClasses: String,
@@ -152,9 +110,5 @@ object Tenant {
              isUseASP: Boolean,
              replicationStrategyId: Int,
              emailConfigId: Int,
-             uuid: String) = Tenant(tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, value,
-    name, None, None, None, None, None, None, None, isMultilingualDocument, isSMTPAuthorization,
-    isUseBetaFunctions, None, None, isAutoArchive, mmPolicy, None, isServerEmail, None,
-    isPostImmediate, isCostImmediate, isStoreAttachmentsOnFileSystem, None, None,
-    storeArchiveOnFileSystem, None, None, isUseASP, None, None, uuid)
+             uuid: String) = Tenant(tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, value, name,description,requestEmail,requestUser,requestUserPW,requestFolder,language, isMultilingualDocument, isUseBetaFunctions,ldapQuery,modelValidationClasses, isAutoArchive,mmPolicy,emailTest,isServerEmail,documentDir, isPostImmediate, isCostImmediate, isStoreAttachmentsOnFileSystem,windowsAttachmentPath,unixAttachmentPath, storeArchiveOnFileSystem,windowsArchivePath,unixArchivePath, isUseASP,replicationStrategyId,emailConfigId, uuid)
 }

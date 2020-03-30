@@ -18,6 +18,8 @@ package org.eevolution.context.paymentprocessor.domain.model
 
 import java.time.Instant
 
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, Table, TableDirect, YesNo}
+
 /**
   * Organization Entity
   *
@@ -33,22 +35,10 @@ import java.time.Instant
   * @param description           Description
   * @param isSummary             Is Summary
   * @param replicationStrategyId Replication Strategy ID
+  * @param parentOrganizationId  ParentOrganization ID
   * @param uuid                  UUID
   */
-case class Organization(organizationId: Int,
-                        tenantId: Int,
-                        isActive: Boolean = true,
-                        created: Instant = Instant.now(),
-                        createdBy: Int,
-                        updated: Instant = Instant.now(),
-                        updatedBy: Int,
-                        value: String,
-                        name: String,
-                        description: Option[String],
-                        isSummary: Boolean = true,
-                        replicationStrategyId: Option[Int],
-                        uuid: String
-                       ) extends DomainModel
+case class Organization(organizationId: Id, tenantId: TableDirect, isActive: YesNo = true, created: DateTime = Instant.now(), createdBy: Table, updated: DateTime = Instant.now(), updatedBy: Table, value: String, name: String, description: String, isSummary: Boolean = true, replicationStrategyId: TableDirect, parentOrganizationId: Table, uuid: String ) extends DomainModel
 
   with ActiveEnabled
   with Identifiable
@@ -65,18 +55,19 @@ case class Organization(organizationId: Int,
 
 object Organization {
   //implicit lazy val jsonFormat = Jsonx.formatCaseClass[Organization]
-  def create(organizationId: Int,
-             tenantId: Int,
-             isActive: Boolean,
-             created: Instant,
-             createdBy: Int,
-             updated: Instant,
-             updatedBy: Int,
+  def create(organizationId: Id,
+             tenantId: TableDirect,
+             isActive: YesNo,
+             created: DateTime,
+             createdBy: Table,
+             updated: DateTime,
+             updatedBy: Table,
              value: String,
              name: String,
              description: String,
-             isSummary: Boolean,
-             replicationStrategyId: Int,
+             isSummary: YesNo,
+             replicationStrategyId: TableDirect,
+             parentOrganizationId: Table,
              uuid: String) = Organization(organizationId, tenantId, isActive, created, createdBy, updated,
-    updatedBy, value, name, None, isSummary, None, uuid)
+    updatedBy, value, name, description, isSummary, replicationStrategyId,parentOrganizationId, uuid)
 }

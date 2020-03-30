@@ -14,36 +14,36 @@
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
 
+
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Organization}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
+
+
+
 import org.eevolution.context.paymentprocessor.api.repository.OrganizationRepository
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.OrganizationRepository.OrganizationRepository
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, Organization}
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * API Trait Domain Organization Service
-  */
-trait OrganizationService {
-  def organizationService : OrganizationService.Service
-}
-
-/**
-  * API Singleton Object Domain Organization Service
+  * Standard Implementation for Domain Organization Service
   */
 object OrganizationService {
 
-  type OrganizationServiceEnvironment =  OrganizationRepository with ContextEnvironment
+
+  type OrganizationService =  Has[Service]
 
   trait Service {
-    def getById(id: Id): ZIO[OrganizationServiceEnvironment, Throwable, Organization]
+    def getById(id: Id): RIO[OrganizationRepository, Option[Organization]] = ???
   }
-
-  trait Live extends OrganizationService
-
-  object Live extends OrganizationService.Live {
-    def organizationService: OrganizationService.Service = new Service {
-      override def getById(id: Id): ZIO[OrganizationServiceEnvironment, Throwable, Organization] = ???
+  def live : ZLayer[OrganizationRepository, Throwable, Has[OrganizationService.Service]] =   ZLayer.fromService[OrganizationRepository.Service, Service] { organizationRepository=>
+    new Service {
+      override def getById(id: Id): RIO[OrganizationRepository, Option[Organization]] = organizationRepository.getById(id)
     }
   }
+
+  //def live : ZLayer[OrganizationRepository, Nothing, Has[OrganizationService.Service]] =   ZLayer.fromService[OrganizationRepository.Service, Service] { organizationRepository => OrganizationServiceLive ( organizationRepository)}
 }
+
+
+

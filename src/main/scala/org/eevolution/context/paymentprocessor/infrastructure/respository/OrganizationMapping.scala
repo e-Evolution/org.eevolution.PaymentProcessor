@@ -14,16 +14,30 @@
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
 
+package org.eevolution.context.paymentprocessor.infrastructure.respository
 
-package org.eevolution.context.paymentprocessor.api.repository
+import org.eevolution.context.paymentprocessor.domain.model.Organization
+import org.eevolution.context.paymentprocessor.infrastructure.database.context._
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.Domain
-
-/*
-Standard API to implement Repository Pattern for infrastructure application
- */
-trait Repository {
-
-  def getById(id: Integer): Option[Domain]
-
+/**
+  * Bank Mapping with Database
+  */
+trait OrganizationMapping {
+  def quoteOrganization = quote(
+    querySchema[Organization]("AD_Org",
+      _.tenantId -> "C_Currency_ID",
+      _.tenantId -> "AD_Client_ID",
+      _.organizationId -> "AD_Org_ID",
+      _.isActive -> "IsActive",
+      _.created -> "Created",
+      _.createdBy -> "CreatedBy",
+      _.updated -> "Updated",
+      _.updatedBy -> "UpdatedBy",
+      _.value -> "Value",
+      _.name -> "Name",
+      _.description -> "Description",
+      _.replicationStrategyId -> "AD_ReplicationStrategy_ID",
+      _.parentOrganizationId ->"Parent_Org_ID",
+      _.uuid -> "UUID")
+  )
 }

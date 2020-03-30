@@ -17,36 +17,24 @@
 
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Partner}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
 import org.eevolution.context.paymentprocessor.api.repository.PartnerRepository
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.PartnerRepository.PartnerRepository
+import org.eevolution.context.paymentprocessor.domain.service.PartnerServiceLive
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, Partner}
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * API Trait Domain Bank Account Service
+  * Standard Implementation for Domain Bank Account Service
   */
-trait PartnerService {
-  def partnerService: PartnerService.Service
-}
-
-/**
-  * API Singleton Object Domain Bank Account Service
-  */
-
 object PartnerService {
 
-  type PartnerServiceEnvironment = PartnerRepository with ContextEnvironment
+
+
+  type PartnerService = Has[Service]
 
   trait Service {
-    def getById(partnerId: Id): ZIO[PartnerServiceEnvironment, Throwable, Partner]
+    def getById(partnerId: Id): RIO[Any, Option[Partner]]
   }
 
-  trait Live extends PartnerService
-
-  object Live extends Live {
-    def partnerService: PartnerService.Service = new Service {
-      override def getById(partnerId: Id): ZIO[PartnerServiceEnvironment, Throwable, Partner] = ???
-    }
-  }
-
+  def live: ZLayer[PartnerRepository, Throwable, Has[Service]] = ZLayer.fromService[ PartnerRepository.Service, Service] { ( partnerRepository) => PartnerServiceLive( partnerRepository)} //ZLayer.fromServices[Context.Service, PartnerRepository.Service, Service] { (contextService, partnerRepository) =>PartnerServiceLive(contextService, partnerRepository)}
 }

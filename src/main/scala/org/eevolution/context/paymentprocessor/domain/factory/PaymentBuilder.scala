@@ -19,12 +19,11 @@ package org.eevolution.context.paymentprocessor.domain.factory
 
 import java.time.Instant
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage._
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
+import org.compiere.util.Env
 import org.eevolution.context.paymentprocessor.domain.model.Payment
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Amount, BankAccount, Currency, Date, DocumentType, List, Maybe, Once, Partner, Payment, Required, YesNo}
 import org.eevolution.context.paymentprocessor.domain.valueobject.{DocumentStatus, PaymentTenderType, PaymentTrxType}
-import zio.ZIO
+import zio.Task
 
 /**
   * Factory to Create Payment Instance
@@ -79,7 +78,7 @@ object PaymentBuilder {
     type IsOnce[T] = =:=[T, Once]
     type IsMandatory[T] = =:=[T, Required]
 
-    def withDocumentType[DocumentType <: WithPartnerTracking : IsMandatory](dt: UbiquitousLanguage.DocumentType) =
+    def withDocumentType[DocumentType <: WithPartnerTracking : IsMandatory](dt: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.DocumentType) =
       copy[
         Once,
         WithDescriptionTracking,
@@ -123,7 +122,7 @@ object PaymentBuilder {
         WithDiscountAmount,
         WithPrePayment](maybeDescription = Some(d))
 
-    def withPartner[Partner <: WithPartnerTracking : IsMandatory](p: UbiquitousLanguage.Partner) =
+    def withPartner[Partner <: WithPartnerTracking : IsMandatory](p: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.Partner) =
       copy[
         WithDocumentTypeTracking,
         WithDescriptionTracking,
@@ -145,7 +144,7 @@ object PaymentBuilder {
         WithDiscountAmount,
         WithPrePayment](maybePartner = Some(p))
 
-    def withBankAccount[BankAccount <: WithBankAccountTracking : IsMandatory](ba: UbiquitousLanguage.BankAccount) =
+    def withBankAccount[BankAccount <: WithBankAccountTracking : IsMandatory](ba: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.BankAccount) =
       copy[
         WithDocumentTypeTracking,
         WithDocumentTypeTracking,
@@ -214,7 +213,7 @@ object PaymentBuilder {
         WithPrePayment
       ](maybeDateAccount = Some(da))
 
-    def withCurrency[Currency <: WithCurrencyTracking : IsMandatory](c: UbiquitousLanguage.Currency) =
+    def withCurrency[Currency <: WithCurrencyTracking : IsMandatory](c: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.Currency) =
       copy[
         WithDocumentTypeTracking,
         WithDescriptionTracking,
@@ -505,128 +504,33 @@ object PaymentBuilder {
       PayAmt <: WithPayAmt : IsOnce,
       WriteOffAmount <: WithWriteOffAmount : IsOnce,
       DiscountAmount <: WithDiscountAmount : IsOnce,
-    ](): ZIO[ContextEnvironment, Any, Payment] = ZIO.accessM {
-      environment =>
+    ](): Task[Option[Payment]] =
         for {
-          tenant <- environment.execution.getTenant
-          organization <- environment.execution.getOrganization
-          user <- environment.execution.getUser
-          description <- ZIO.fromOption(maybeDescription)
-          bankAccount <- ZIO.fromOption(maybeBankAccount)
-          dateTrx <- ZIO.fromOption(maybeDateTrx)
-          dateAccount <- ZIO.fromOption(maybeDateAccount)
-          currency <- ZIO.fromOption(maybeCurrency)
-          payAmount <- ZIO.fromOption(maybePayAmount)
-          writeOffAmount <- ZIO.fromOption(maybeWriteOffAmount)
-          discountAmount <- ZIO.fromOption(maybeDiscountAmount)
-          documentType <- ZIO.fromOption(maybeDocumentType)
-          partner <- ZIO.fromOption(maybePartner)
-          tenderType <- ZIO.fromOption(maybeTenderType)
-          transactionType <- ZIO.fromOption(maybeTrxType)
-          onlineProcessing <- ZIO.fromOption(maybeOnlineProcessing)
-          creditCardType <- ZIO.fromOption(maybeCreditCardType)
-          creditCardExpMM <- ZIO.fromOption(maybeCreditCardExpMM)
-          creditCardExpYY <- ZIO.fromOption(maybeCreditCardExpYY)
-          creditCardNumber <- ZIO.fromOption(maybeCreditCardNumber)
-          creditCardVerificationCode <- ZIO.fromOption(maybeCreditCardVerificationCode)
-          payment <- ZIO.effectTotal(
-            Payment.create(
-              0,
-              "",
-              tenant.Id,
-              organization.Id,
-              true,
-              Instant.now,
-              user.Id,
-              Instant.now,
-              user.Id,
-              "",
-              "",
-              "",
-              0,
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              0,
-              bankAccount.Id,
-              partner.Id,
-              0,
-              0,
-              0,
-              0,
-              0,
-              currency.Id,
-              documentType.Id,
-              0.0,
-              "",
-              0,
-              0,
-              0,
-              0,
-              0,
-              creditCardType,
-              creditCardExpMM,
-              creditCardExpYY,
-              creditCardNumber,
-              creditCardVerificationCode,
-              dateTrx,
-              dateAccount,
-              description,
-              discountAmount,
-              "",
-              DocumentStatus.Drafted.value,
-              "",
-              false,
-              false,
-              false,
-              false,
-              true,
-              false,
-              false,
-              false,
-              false,
-              false,
-              "",
-              onlineProcessing,
-              "",
-              0.0,
-              payAmount,
-              "",
-              "N",
-              false,
-              0,
-              "N",
-              "",
-              "",
-              "",
-              "",
-              false,
-              0,
-              0,
-              0,
-              "",
-              "",
-              "",
-              "",
-              "",
-              "",
-              0,
-              "",
-              0.0,
-              tenderType,
-              transactionType,
-              0,
-              0,
-              0,
-              0,
-              "",
-              writeOffAmount))
+          //tenant <- environment.get.getTenant
+          //organization <- environment.get.getOrganization
+          //user <- environment.get.getUser
+          description <- Task(maybeDescription.get)
+          bankAccount <- Task(maybeBankAccount.get)
+          dateTrx <- Task(maybeDateTrx.get)
+          dateAccount <- Task(maybeDateAccount.get)
+          currency <- Task(maybeCurrency.get)
+          payAmount <- Task(maybePayAmount.get)
+          writeOffAmount <- Task(maybeWriteOffAmount.get)
+          discountAmount <- Task(maybeDiscountAmount.get)
+          documentType <- Task(maybeDocumentType.get)
+          partner <- Task(maybePartner.get)
+          tenderType <- Task(maybeTenderType.get)
+          transactionType <- Task(maybeTrxType.get)
+          onlineProcessing <- Task(maybeOnlineProcessing.get)
+          creditCardType <- Task(maybeCreditCardType.get)
+          creditCardExpMM <- Task(maybeCreditCardExpMM.get)
+          creditCardExpYY <- Task(maybeCreditCardExpYY.get)
+          creditCardNumber <- Task(maybeCreditCardNumber.get)
+          creditCardVerificationCode <- Task(maybeCreditCardVerificationCode.get)
+          payment <- Task(
+            Option(Payment.create(0, "", Env.getAD_Client_ID(Env.getCtx), Env.getAD_Org_ID(Env.getCtx), true, Instant.now, Env.getAD_User_ID(Env.getCtx), Instant.now, Env.getAD_User_ID(Env.getCtx), "", "", "", 0, "", "", "", "", "", "", "", 0, bankAccount.Id, partner.Id, 0, 0, 0, 0, 0, currency.Id, documentType.Id, 0.0, "", 0, 0, 0, 0, 0, creditCardType, creditCardExpMM, creditCardExpYY, creditCardNumber, creditCardVerificationCode, dateTrx, dateAccount, description, discountAmount, "", DocumentStatus.Drafted.value, "", false, false, false, false, true, false, false, false, false, false, "", onlineProcessing, "", 0.0, payAmount, "", "N", false, 0, "N", "", "", "", "", false, 0, 0, 0, "", "", "", "", "", "", 0, "", 0.0, tenderType, transactionType, 0, 0, 0, 0, "", writeOffAmount))
+          )
         } yield payment
     }
-  }
 
 }

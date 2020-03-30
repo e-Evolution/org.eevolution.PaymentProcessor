@@ -13,50 +13,59 @@
   * Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
+
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, Partner, User}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
+
+
+import org.eevolution.context.paymentprocessor.api.Context
+import org.eevolution.context.paymentprocessor.api.Context.Context
 import org.eevolution.context.paymentprocessor.api.repository.UserRepository
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.api.repository.UserRepository.UserRepository
+import org.eevolution.context.paymentprocessor.domain.service.UserServiceLive
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, Partner, User}
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * API Trait Domain User Service
-  */
-trait UserService {
-  def userService: UserService.Service
-}
-
-/**
-  * API Singleton Object Domain User Service
+  * Standard Implementation for Domain User Domain
   */
 object UserService {
 
-  type UserServiceEnvironment = UserRepository with ContextEnvironment
+  type UserService = Has[Service]
 
   trait Service {
-    def getById(id: Id): ZIO[UserServiceEnvironment, Throwable, User]
-
-    def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User]
-
-    def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User]
-
-    def save (user:User) : ZIO[UserServiceEnvironment, Throwable, User]
+    def getById(id: Id): RIO[Any, Option[User]]
+    def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): RIO[Any, Option[User]]
+    def create(partner : Partner , userName : String , accountEmail : String , userPassword : String) : RIO[Any,Option[ User]]
+    def save (user:User) : RIO[Any, Option[User]]
   }
 
-  trait Live extends UserService
+  def live : ZLayer[UserRepository, Nothing, Has[Service]] =  ZLayer.fromService[ UserRepository.Service, Service] { ( userRepository) => UserServiceLive (userRepository)}  //ZLayer.fromServices[Context.Service , UserRepository.Service, Service] { (context, userRepository) =>UserServiceLive (context, userRepository)}
 
-  object Live extends UserService.Live {
-    def userService: UserService.Service = new Service {
-      override def getById(id: Id): ZIO[UserServiceEnvironment, Throwable, User] = ???
+  //trait Live extends api.service.UserServiceAPI
 
-      override def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User] = ???
+  /*object Live extends Live {
+     new Service {
+      override def getById(id: Id): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getById(id))
 
-      override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User] = ???
+      override def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getUser(partnerId,userName,accountEmail, password))
 
-      override def save(user: User): ZIO[UserServiceEnvironment, Throwable, User] = ???
+      override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User] =  ZIO.accessM(_.get.create(partner,userName,accountEmail,userPassword))
+
+      override def save(user: User): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.save(user))
     }
   }
 
+  def live: NoDeps[Nothing, Has[Live.type]] = ZLayer.succeed(Live)*/
+
+  /*def getById(id: Id): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getById(id))
+
+   def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getUser(partnerId,userName,accountEmail, password))
+
+   def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User] = ZIO.accessM(_.get.create(partner,userName,accountEmail,userPassword))
+
+   def save(user: User): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.save(user))*/
+
 }
+
 

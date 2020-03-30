@@ -18,11 +18,10 @@ package org.eevolution.context.paymentprocessor.domain.factory
 
 import java.time.Instant
 
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage
-import org.eevolution.context.paymentprocessor.UbiquitousLanguage.{Id, List, Maybe, Once, Required, User, YesNo}
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
+import org.compiere.util.Env
 import org.eevolution.context.paymentprocessor.domain.model.PartnerBankAccount
-import zio.ZIO
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, List, Maybe, Once, PartnerBankAccount, Required, User, YesNo}
+import zio.{Task, ZIO}
 
 object PartnerBankAccountBuilder {
 
@@ -109,7 +108,7 @@ object PartnerBankAccountBuilder {
         WithIBANTracking,
         WithRoutingNoTracking](maybeAccountName = Some(accountName))
 
-    def WithPartnerId[Partner <: WithPartnerIdTracking : IsMandatory](partnerId: UbiquitousLanguage.Id) =
+    def WithPartnerId[Partner <: WithPartnerIdTracking : IsMandatory](partnerId: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.Id) =
       copy[
         WithAccountNameTracking,
         Once,
@@ -136,7 +135,7 @@ object PartnerBankAccountBuilder {
         WithIBANTracking,
         WithRoutingNoTracking](maybePartnerId = Some(partnerId))
 
-    def WithBank[Bank <: WithBankIdTracking : IsMandatory](id: UbiquitousLanguage.Id) =
+    def WithBank[Bank <: WithBankIdTracking : IsMandatory](id: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.Id) =
       copy[
         WithAccountNameTracking,
         WithPartnerIdTracking,
@@ -163,7 +162,7 @@ object PartnerBankAccountBuilder {
         WithIBANTracking,
         WithRoutingNoTracking](maybeBankId = Some(id))
 
-    def IsACH[IsACH <: WithIsACHTracking : IsMandatory](isACH: UbiquitousLanguage.YesNo) =
+    def IsACH[IsACH <: WithIsACHTracking : IsMandatory](isACH: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.YesNo) =
       copy[
         WithAccountNameTracking,
         WithPartnerIdTracking,
@@ -487,7 +486,7 @@ object PartnerBankAccountBuilder {
         WithIBANTracking,
         WithRoutingNoTracking](maybeAccountSocialSecurityNo = Some(accountSocialSecurityNo))
 
-    def WithUser[User <: WithUserTracking : IsMandatory](user: UbiquitousLanguage.User) =
+    def WithUser[User <: WithUserTracking : IsMandatory](user: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.User) =
       copy[
         WithAccountNameTracking,
         WithPartnerIdTracking,
@@ -728,44 +727,42 @@ object PartnerBankAccountBuilder {
       CreditCardVerificationCode <: WithCreditCardVerificationCodeTracking : IsOnce,
       IBAN <: WithIBANTracking : IsOnce,
       RoutingNo <: WithRoutingNoTracking : IsOnce
-    ](): ZIO[ContextEnvironment, Any, PartnerBankAccount] = ZIO.accessM {
-      environment =>
+    ](): Task[Option[PartnerBankAccount]] =
         for {
-          tenant <- environment.execution.getTenant
-          organization <- environment.execution.getOrganization
-          user <- environment.execution.getUser
-          accountName <- ZIO.fromOption(maybeAccountName)
-          partnerId <- ZIO.fromOption(maybePartnerId)
-          bankId <- ZIO.fromOption(maybeBankId)
-          isACH <- ZIO.fromOption(maybeIsACH)
-          isPayrollAccount <- ZIO.fromOption(maybeIsPayrollAccount)
-          accountNo <- ZIO.fromOption(maybeAccountNo)
-          accountEMail <- ZIO.fromOption(maybeAccountEMail)
-          accountStreet <- ZIO.fromOption(maybeAccountStreet)
-          accountCountry <- ZIO.fromOption(maybeAccountCountry)
-          accountCity <- ZIO.fromOption(maybeAccountCity)
-          accountState <- ZIO.fromOption(maybeAccountState)
-          accountZip <- ZIO.fromOption(maybeAccountZip)
-          bankAccountType <- ZIO.fromOption(maybeBankAccountType)
-          partnerBankAccountUse <- ZIO.fromOption(maybePartnerIdBankAccountUse)
-          accountDriverLicense <- ZIO.fromOption(maybeAccountDriverLicense)
-          accountSocialSecurityNo <- ZIO.fromOption(maybeAccountSocialSecurityNo)
-          user <- ZIO.fromOption(maybeUser)
-          creditCardType <- ZIO.fromOption(maybeCreditCardType)
-          creditCardExpMM <- ZIO.fromOption(maybeCreditCardExpMM)
-          creditCardExpYY <- ZIO.fromOption(maybeCreditCardExpYY)
-          creditCardNumber <- ZIO.fromOption(maybeCreditCardNumber)
-          creditCardVerificationCode <- ZIO.fromOption(maybeCreditCardVerificationCode)
-          iban <- ZIO.fromOption(maybeIBAN)
-          routingNo <- ZIO.fromOption(maybeRoutingNo)
-          partnerBankAccount <- ZIO.effectTotal(
-            PartnerBankAccount.create(
+          //tenant <- environment.get.getTenant
+          //organization <- environment.get.getOrganization
+          //user <- environment.get.getUser
+          accountName <- Task(maybeAccountName.get)
+          partnerId <- Task(maybePartnerId.get)
+          bankId <- Task(maybeBankId.get)
+          isACH <- Task(maybeIsACH.get)
+          isPayrollAccount <- Task(maybeIsPayrollAccount.get)
+          accountNo <- Task(maybeAccountNo.get)
+          accountEMail <- Task(maybeAccountEMail.get)
+          accountStreet <- Task(maybeAccountStreet.get)
+          accountCountry <- Task(maybeAccountCountry.get)
+          accountCity <- Task(maybeAccountCity.get)
+          accountState <- Task(maybeAccountState.get)
+          accountZip <- Task(maybeAccountZip.get)
+          bankAccountType <- Task(maybeBankAccountType.get)
+          partnerBankAccountUse <- Task(maybePartnerIdBankAccountUse.get)
+          accountDriverLicense <- Task(maybeAccountDriverLicense.get)
+          accountSocialSecurityNo <- Task(maybeAccountSocialSecurityNo.get)
+          user <- Task(maybeUser.get)
+          creditCardType <- Task(maybeCreditCardType.get)
+          creditCardExpMM <- Task(maybeCreditCardExpMM.get)
+          creditCardExpYY <- Task(maybeCreditCardExpYY.get)
+          creditCardNumber <- Task(maybeCreditCardNumber.get)
+          creditCardVerificationCode <- Task(maybeCreditCardVerificationCode.get)
+          iban <- Task(maybeIBAN.get)
+          routingNo <- Task(maybeRoutingNo.get)
+          partnerBankAccount <- Task.effectTotal(Option(PartnerBankAccount.create(
               0,
               partnerId,
               bankId,
               "",
-              tenant.Id,
-              organization.Id,
+              Env.getAD_Client_ID(Env.getCtx),
+              Env.getAD_Org_ID(Env.getCtx),
               true,
               Instant.now,
               user.userId,
@@ -795,9 +792,8 @@ object PartnerBankAccountBuilder {
               "",
               routingNo,
               iban
-            ))
+            )))
         } yield partnerBankAccount
     }
-  }
 
 }

@@ -19,8 +19,7 @@ package org.eevolution.context.paymentprocessor.domain
 import java.time.Instant
 import java.util.UUID
 
-import org.eevolution.context.paymentprocessor.api.repository.Context.ContextEnvironment
-import zio.ZIO
+import zio.{Task, ZIO}
 
 /**
   * Package with API for Domain Model
@@ -119,13 +118,13 @@ package object model {
 
     type Repository
 
-    def getById(id: idType): ZIO[ContextEnvironment, Throwable, DomainModel]
+    def getById(id: idType): Task[DomainModel]
 
-    def getByUUID(uuid: UUID): ZIO[ContextEnvironment, Throwable, DomainModel]
+    def getByUUID(uuid: UUID): Task[DomainModel]
 
-    def getAllByPage(page: Int, pageSize: Int): ZIO[ContextEnvironment, Throwable, DomainModel]
+    def getAllByPage(page: Int, pageSize: Int): Task[DomainModel]
 
-    def getAll: ZIO[ContextEnvironment, Throwable, List[DomainModel]]
+    def getAll: Task[List[DomainModel]]
   }
 
 
