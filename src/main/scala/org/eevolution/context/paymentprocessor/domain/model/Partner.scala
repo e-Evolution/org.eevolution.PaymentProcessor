@@ -16,7 +16,9 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
+
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
 
 /**
   * Partner Entity
@@ -42,26 +44,26 @@ import java.time.Instant
   * @param isEmployee
   * @param isVendor
   */
-case class Partner(partnerId: Int,
+case class Partner(partnerId: Id,
                    uuid: String,
-                   tenantId: Int,
-                   organizationId: Int = 0,
-                   isActive: Boolean = true,
-                   created: Instant = Instant.now,
-                   createdBy: Int,
-                   updated: Instant = Instant.now,
-                   updatedBy: Int,
+                   tenantId: TableDirect,
+                   organizationId: TableDirect = 0,
+                   isActive: YesNo = true,
+                   created: DateTime = LocalDateTime.now,
+                   createdBy: Table,
+                   updated: DateTime = LocalDateTime.now,
+                   updatedBy: Table,
                    value: String,
                    name: String,
-                   partnerGroupId: Int,
-                   accountTypeId: Int,
-                   industryTypeId: Int,
-                   salesGroupId: Int,
-                   segmentId: Int,
+                   partnerGroupId: TableDirect,
+                   accountTypeId: TableDirect,
+                   industryTypeId: TableDirect,
+                   salesGroupId: TableDirect,
+                   segmentId: TableDirect,
                    description: String,
-                   isCustomer: Boolean = true,
-                   isEmployee: Boolean = false,
-                   isVendor: Boolean = false
+                   isCustomer: YesNo = true,
+                   isEmployee: YesNo = false,
+                   isVendor: YesNo = false
                   )
   extends DomainModel with ActiveEnabled
     with Identifiable
@@ -77,26 +79,26 @@ case class Partner(partnerId: Int,
 }
 
 object Partner {
-  def create(partnerId: Int,
+  def create(partnerId: Id,
              uuid: String,
-             tenantId: Int,
-             organizationId: Int = 0,
-             isActive: Boolean = true,
-             created: Instant = Instant.now,
-             createdBy: Int,
-             updated: Instant = Instant.now,
-             updatedBy: Int,
+             tenantId: TableDirect,
+             organizationId: TableDirect = 0,
+             isActive: YesNo = true,
+             created: DateTime = LocalDateTime.now,
+             createdBy: Table,
+             updated: DateTime = LocalDateTime.now,
+             updatedBy: Table,
              value: String,
              name: String,
-             partnerGroupId: Int,
-             accountTypeId: Int,
-             industryTypeId: Int,
-             salesGroupId: Int,
-             segmentId: Int,
+             partnerGroupId: TableDirect,
+             accountTypeId: TableDirect,
+             industryTypeId: TableDirect,
+             salesGroupId: TableDirect,
+             segmentId: TableDirect,
              description: String,
-             isCustomer: Boolean = true,
-             isEmployee: Boolean = false,
-             isVendor: Boolean = false
+             isCustomer: YesNo = true,
+             isEmployee: YesNo = false,
+             isVendor: YesNo = false
             ): Partner =
     Partner(
       partnerId,

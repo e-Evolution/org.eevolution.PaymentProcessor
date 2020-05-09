@@ -16,16 +16,16 @@
 
 package org.eevolution.context.paymentprocessor.domain.factory
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 import org.compiere.util.Env
 import org.eevolution.context.paymentprocessor.domain.model.PartnerBankAccount
-import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, List, Maybe, Once, PartnerBankAccount, Required, User, YesNo}
-import zio.{Task, ZIO}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, List, Maybe, Once, PartnerBankAccount, Required, YesNo}
+import zio.{RIO, Task}
 
 object PartnerBankAccountBuilder {
 
-  def apply() = new Builder[Required, Required, Required, Required, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe]()
+  def apply() = new Builder[Maybe, Required, Required, Required, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe, Maybe]()
 
   case class Builder[
     WithAccountNameTracking <: Maybe,
@@ -69,7 +69,7 @@ object PartnerBankAccountBuilder {
      maybePartnerIdBankAccountUse: Option[List] = None,
      maybeAccountDriverLicense: Option[List] = None,
      maybeAccountSocialSecurityNo: Option[List] = None,
-     maybeUser: Option[User] = None,
+     maybeUserId: Option[Id] = None,
      maybeCreditCardType: Option[String] = None,
      maybeCreditCardExpMM: Option[Int] = None,
      maybeCreditCardExpYY: Option[Int] = None,
@@ -216,7 +216,7 @@ object PartnerBankAccountBuilder {
         WithIBANTracking,
         WithRoutingNoTracking](maybeAccountNo = Some(accountNo))
 
-    def WithAccountEMail[AccountEMail <: WithAccountEMailTracking : IsMandatory](emil: String) =
+    def WithAccountEMail[AccountEMail <: WithAccountEMailTracking : IsMandatory](email: String) =
       copy[
         WithAccountNameTracking,
         WithPartnerIdTracking,
@@ -241,7 +241,7 @@ object PartnerBankAccountBuilder {
         WithCreditCardNumberTracking,
         WithCreditCardVerificationCodeTracking,
         WithIBANTracking,
-        WithRoutingNoTracking](maybeAccountEMail = Some(emil))
+        WithRoutingNoTracking](maybeAccountEMail = Some(email))
 
     def WithAccountStreet[AccountStreet <: WithAccountStreetTracking : IsMandatory](accountStreet: String) =
       copy[
@@ -486,7 +486,7 @@ object PartnerBankAccountBuilder {
         WithIBANTracking,
         WithRoutingNoTracking](maybeAccountSocialSecurityNo = Some(accountSocialSecurityNo))
 
-    def WithUser[User <: WithUserTracking : IsMandatory](user: org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.User) =
+    def WithUser[User <: WithUserTracking : IsMandatory](userId: Id) =
       copy[
         WithAccountNameTracking,
         WithPartnerIdTracking,
@@ -511,7 +511,7 @@ object PartnerBankAccountBuilder {
         WithCreditCardNumberTracking,
         WithCreditCardVerificationCodeTracking,
         WithIBANTracking,
-        WithRoutingNoTracking](maybeUser = Some(user))
+        WithRoutingNoTracking](maybeUserId = Some(userId))
 
     def WithCreditCardType[CreditCardType <: WithCreditCardTypeTracking : IsMandatory](creditCardType: String) =
       copy[
@@ -728,72 +728,36 @@ object PartnerBankAccountBuilder {
       IBAN <: WithIBANTracking : IsOnce,
       RoutingNo <: WithRoutingNoTracking : IsOnce
     ](): Task[Option[PartnerBankAccount]] =
-        for {
-          //tenant <- environment.get.getTenant
-          //organization <- environment.get.getOrganization
-          //user <- environment.get.getUser
-          accountName <- Task(maybeAccountName.get)
-          partnerId <- Task(maybePartnerId.get)
-          bankId <- Task(maybeBankId.get)
-          isACH <- Task(maybeIsACH.get)
-          isPayrollAccount <- Task(maybeIsPayrollAccount.get)
-          accountNo <- Task(maybeAccountNo.get)
-          accountEMail <- Task(maybeAccountEMail.get)
-          accountStreet <- Task(maybeAccountStreet.get)
-          accountCountry <- Task(maybeAccountCountry.get)
-          accountCity <- Task(maybeAccountCity.get)
-          accountState <- Task(maybeAccountState.get)
-          accountZip <- Task(maybeAccountZip.get)
-          bankAccountType <- Task(maybeBankAccountType.get)
-          partnerBankAccountUse <- Task(maybePartnerIdBankAccountUse.get)
-          accountDriverLicense <- Task(maybeAccountDriverLicense.get)
-          accountSocialSecurityNo <- Task(maybeAccountSocialSecurityNo.get)
-          user <- Task(maybeUser.get)
-          creditCardType <- Task(maybeCreditCardType.get)
-          creditCardExpMM <- Task(maybeCreditCardExpMM.get)
-          creditCardExpYY <- Task(maybeCreditCardExpYY.get)
-          creditCardNumber <- Task(maybeCreditCardNumber.get)
-          creditCardVerificationCode <- Task(maybeCreditCardVerificationCode.get)
-          iban <- Task(maybeIBAN.get)
-          routingNo <- Task(maybeRoutingNo.get)
-          partnerBankAccount <- Task.effectTotal(Option(PartnerBankAccount.create(
-              0,
-              partnerId,
-              bankId,
-              "",
-              Env.getAD_Client_ID(Env.getCtx),
-              Env.getAD_Org_ID(Env.getCtx),
-              true,
-              Instant.now,
-              user.userId,
-              Instant.now,
-              user.userId,
-              accountNo,
-              accountName,
-              accountCity,
-              accountCountry,
-              accountState,
-              accountStreet,
-              accountEMail,
-              accountDriverLicense,
-              accountSocialSecurityNo,
-              accountZip,
-              user.userId,
-              bankAccountType,
-              partnerBankAccountUse,
-              creditCardExpMM,
-              creditCardExpYY,
-              creditCardNumber,
-              creditCardType,
-              creditCardVerificationCode,
-              isACH,
-              isPayrollAccount,
-              "",
-              "",
-              routingNo,
-              iban
-            )))
-        } yield partnerBankAccount
-    }
+      for {
+        //tenant <- environment.get.getTenant
+        //organization <- environment.get.getOrganization
+        //user <- environment.get.getUser
+        accountName <- Task(maybeAccountName.get)
+        partnerId <- Task(maybePartnerId.get)
+        bankId <- Task(maybeBankId.get)
+        isACH <- Task(maybeIsACH.get)
+        isPayrollAccount <- Task(maybeIsPayrollAccount.get)
+        accountNo <- Task(maybeAccountNo.getOrElse(""))
+        accountEMail <- Task(maybeAccountEMail.get)
+        accountStreet <- Task(maybeAccountStreet.getOrElse(""))
+        accountCountry <- Task(maybeAccountCountry.getOrElse(""))
+        accountCity <- Task(maybeAccountCity.getOrElse(""))
+        accountState <- Task(maybeAccountState.getOrElse(""))
+        accountZip <- Task(maybeAccountZip.getOrElse(""))
+        bankAccountType <- Task(maybeBankAccountType.getOrElse(""))
+        partnerBankAccountUse <- Task(maybePartnerIdBankAccountUse.getOrElse(""))
+        accountDriverLicense <- Task(maybeAccountDriverLicense.getOrElse(""))
+        accountSocialSecurityNo <- Task(maybeAccountSocialSecurityNo.getOrElse(""))
+        userId <- Task(maybeUserId.get)
+        creditCardType <- Task(maybeCreditCardType.get)
+        creditCardExpMM <- Task(maybeCreditCardExpMM.get)
+        creditCardExpYY <- Task(maybeCreditCardExpYY.get)
+        creditCardNumber <- Task(maybeCreditCardNumber.get)
+        creditCardVerificationCode <- Task(maybeCreditCardVerificationCode.get)
+        iban <- Task(maybeIBAN.getOrElse(""))
+        routingNo <- Task(maybeRoutingNo.getOrElse(""))
+        partnerBankAccount <- RIO.effectTotal(Option(PartnerBankAccount.create(0, partnerId, bankId, null, Env.getAD_Client_ID(Env.getCtx), Env.getAD_Org_ID(Env.getCtx), true, LocalDateTime.now, 0, LocalDateTime.now, 0, accountNo, accountName, accountCity, accountCountry, accountState, accountStreet, accountEMail, accountDriverLicense, accountSocialSecurityNo, accountZip, userId, bankAccountType, partnerBankAccountUse, creditCardExpMM, creditCardExpYY, creditCardNumber, creditCardType, creditCardVerificationCode, isACH, isPayrollAccount, "", "", routingNo, iban)))
+      } yield partnerBankAccount
+  }
 
 }

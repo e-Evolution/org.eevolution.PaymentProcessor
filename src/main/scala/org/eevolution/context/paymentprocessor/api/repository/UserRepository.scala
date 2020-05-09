@@ -1,3 +1,19 @@
+/**
+  * Copyright (C) 2003-2020, e-Evolution Consultants S.A. , http://www.e-evolution.com
+  * This program is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  * You should have received a copy of the GNU General Public License
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  * Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
+  * Created by victor.perez@e-evolution.com , www.e-evolution.com
+  **/
+
 package org.eevolution.context.paymentprocessor.api.repository
 
 import org.compiere.util.Env
@@ -16,15 +32,13 @@ object UserRepository{
 
   trait Service {
     def getById(id: Id): Task[Option[User]]
-    def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): Task[ Option[User]]
+    def getUser(partnerId: Id, userName: String, accountEmail: String): Task[ Option[User]]
     def create(partner : Partner , userName : String , accountEmail : String , userPassword : String) : Task[ Option[User]]
     def save (user:User) : Task[Option[User]]
   }
   def live  : ZLayer[Any, Throwable, Has[Service]] =   ZLayer.succeed(
     new Service with UserMapping {
     override def getById(id: Id): Task[Option[User]] = for {
-      //ctx <- environment.get.getContext
-      //trx <- environment.get.getTransaction
       user <- Task.fromTry {
         Try {
           //val result = prepare(quoteBankAccount.filter(_.bankAccountId == lift(id)))(trx.getConnection).executeQuery
@@ -36,24 +50,23 @@ object UserRepository{
     } yield user
 
 
-    override def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): Task[Option[User]] = for {
+    override def getUser(partnerId: Id, userName: String, accountEmail: String): Task[Option[User]] = for {
       user <- Task.fromTry {
         Try {
           val user = run(quoteUser.filter(
-            user => user.partnerId == lift(partnerId) &&
-              user.name == lift(userName) &&
-              user.email == lift(accountEmail) &&
-              user.password == lift(password)
+            u => u.partnerId == lift(partnerId) &&
+              u.name == lift(userName) &&
+              u.email == lift(accountEmail)
           )).headOption
           user
         }
       }
     } yield user
 
-    override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): Task[Option[User]] = UserBuilder().WithPartnerId(partner.partnerId).WithName(userName).WithEmail(accountEmail).WithPassword(userPassword).build()
+    override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): Task[Option[User]] = UserBuilder().WithPartnerId(partner.partnerId).WithDescription(partner.description).WithName(userName).WithEmail(accountEmail).WithPassword(userPassword).build()
 
     override def save(user: User): Task[Option[User]] = for {
-      user <- Task.fromTry {
+      newUser <- Task.fromTry {
         Try {
           //val userModel = new MUser(ctx, user.userId, trx.getTrxName)
           val userModel = new MUser(Env.getCtx, user.userId, null)
@@ -63,22 +76,23 @@ object UserRepository{
           userModel.setName(user.name)
           userModel.setEMail(user.email)
           userModel.setPassword(user.password)
-          user.copy(
+          userModel.saveEx()
+          val newUser = user.copy(
             userId = userModel.get_ID,
             uuid = userModel.getUUID,
             createdBy = userModel.getCreatedBy,
-            created = userModel.getCreated.toInstant,
+            created = userModel.getCreated.toLocalDateTime,
             updatedBy = userModel.getUpdatedBy,
-            updated = userModel.getUpdated.toInstant
+            updated = userModel.getUpdated.toLocalDateTime
           )
-          Option(user)
+          Option(newUser)
         }
       }
-    } yield user
+    } yield newUser
   })
 
   def getById(id: Id) = ZIO.accessM[Service](_.getById(id))
-  def getUser(partnerId: Id, userName: String, accountEmail: String, password: String) = ZIO.accessM[Service](_.getUser(partnerId  ,userName , accountEmail , password  ))
+  def getUser(partnerId: Id, userName: String, accountEmail: String) = ZIO.accessM[Service](_.getUser(partnerId, userName, accountEmail))
   def create(partner : Partner , userName : String , accountEmail : String , userPassword : String) = ZIO.accessM[Service](_.create(partner, userName, accountEmail, userPassword))
   def save (user:User) = ZIO.accessM[Service](_.save(user))
 

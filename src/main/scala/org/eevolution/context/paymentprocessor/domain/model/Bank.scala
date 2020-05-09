@@ -16,7 +16,9 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
+
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
 
 /**
   * Bank Entity
@@ -39,21 +41,21 @@ import java.time.Instant
   * @param routingNo
   * @param swiftCode
   */
-case class Bank(bankId: Int,
+case class Bank(bankId: Id,
                 uuid: String,
-                tenantId: Int,
-                organizationId: Int = 0,
-                isActive: Boolean = true,
-                created: Instant = Instant.now,
-                createdBy: Int,
-                updated: Instant = Instant.now,
-                updatedBy: Int,
+                tenantId: TableDirect,
+                organizationId: TableDirect = 0,
+                isActive: YesNo = true,
+                created: DateTime = LocalDateTime.now,
+                createdBy: Table,
+                updated: DateTime = LocalDateTime.now,
+                updatedBy: Table,
                 name: String,
                 bankType: String,
-                partnerId: Int,
-                locationId: Int,
+                partnerId: TableDirect,
+                locationId: TableDirect,
                 description: String,
-                isOwnBank: Boolean = true,
+                isOwnBank: YesNo = true,
                 routingNo: String,
                 swiftCode: String
                )
@@ -72,21 +74,21 @@ case class Bank(bankId: Int,
 
 object Bank {
 
-  def create(bankId: Int,
+  def create(bankId: Id,
              uuid: String,
-             tenantId: Int,
-             organizationId: Int = 0,
-             isActive: Boolean = true,
-             created: Instant = Instant.now,
-             createdBy: Int,
-             updated: Instant = Instant.now,
-             updatedBy: Int,
+             tenantId: TableDirect,
+             organizationId: TableDirect = 0,
+             isActive: YesNo = true,
+             created: DateTime = LocalDateTime.now,
+             createdBy: Table,
+             updated: DateTime = LocalDateTime.now,
+             updatedBy: Table,
              name: String,
              bankType: String,
-             partnerId: Int,
-             locationId: Int,
+             partnerId: TableDirect,
+             locationId: TableDirect,
              description: String,
-             isOwnBank: Boolean = true,
+             isOwnBank: YesNo = true,
              routingNo: String,
              swiftCode: String
             ): Bank =

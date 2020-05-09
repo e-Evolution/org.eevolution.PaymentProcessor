@@ -14,33 +14,24 @@
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
 
-package org.eevolution.context.paymentprocessor.infrastructure.persistence.model
 
-import java.sql.ResultSet
-import java.util.{Comparator, Properties}
+package org.eevolution.context.paymentprocessor.api.service
+
+import org.eevolution.context.paymentprocessor.domain.service.SecurityServiceLive
+import zio.{Has, RIO, ZLayer}
 
 /**
-  * Legacy Persistence Currency Model
-  *
-  * @param ctx
-  * @param id
-  * @param rs
-  * @param trxName
+  * Standard Implementation for Domain Bank Account Service
   */
-class MCurrency(ctx: Properties, id: Int, rs: ResultSet, trxName: String)
-  extends org.compiere.model.MCurrency(ctx: Properties, id: Int, trxName: String) {
+object SecurityService {
 
-  def this(ctx: Properties, id: Int, trxName: String) {
-    this(ctx, id, null, trxName)
-    load(id, trxName)
+  type SecurityService = Has[SecurityService.Service]
+
+  trait Service {
+    def setHash(password: String): RIO[Any, Option[String]]
+
+    def getHash(password: String, hash: String): RIO[Any, Option[String]]
   }
 
-  def this(ctx: Properties, rs: ResultSet, trxName: String) {
-    this(ctx, 999999999, rs, trxName)
-    load(rs)
-  }
-
-  def compare[A](obj1: A, obj2: A)(implicit comparator: Comparator[A]) = {
-    comparator.compare(obj1, obj2)
-  }
+  def live: ZLayer[Any, Throwable, Has[Service]] = ZLayer.succeed(SecurityServiceLive())
 }

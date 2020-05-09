@@ -21,6 +21,7 @@ import java.util.{Comparator, Properties}
 
 /**
   * Legacy Persistence Payment Processor Model
+  *
   * @param ctx
   * @param id
   * @param rs

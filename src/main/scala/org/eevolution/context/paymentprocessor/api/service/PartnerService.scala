@@ -29,12 +29,11 @@ import zio.{Has, RIO, ZLayer}
 object PartnerService {
 
 
-
   type PartnerService = Has[Service]
 
   trait Service {
     def getById(partnerId: Id): RIO[Any, Option[Partner]]
   }
 
-  def live: ZLayer[PartnerRepository, Throwable, Has[Service]] = ZLayer.fromService[ PartnerRepository.Service, Service] { ( partnerRepository) => PartnerServiceLive( partnerRepository)} //ZLayer.fromServices[Context.Service, PartnerRepository.Service, Service] { (contextService, partnerRepository) =>PartnerServiceLive(contextService, partnerRepository)}
+  def live: ZLayer[PartnerRepository, Throwable, Has[Service]] = ZLayer.fromService[PartnerRepository.Service, Service] { (partnerRepository) => PartnerServiceLive(partnerRepository) } //ZLayer.fromServices[Context.Service, PartnerRepository.Service, Service] { (contextService, partnerRepository) =>PartnerServiceLive(contextService, partnerRepository)}
 }

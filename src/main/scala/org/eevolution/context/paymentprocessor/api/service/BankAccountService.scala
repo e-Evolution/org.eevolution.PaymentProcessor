@@ -17,8 +17,6 @@
 
 package org.eevolution.context.paymentprocessor.api.service
 
-import org.eevolution.context.paymentprocessor.api.Context
-import org.eevolution.context.paymentprocessor.api.Context.Context
 import org.eevolution.context.paymentprocessor.api.repository.BankAccountRepository
 import org.eevolution.context.paymentprocessor.api.repository.BankAccountRepository.BankAccountRepository
 import org.eevolution.context.paymentprocessor.domain.service.BankAccountServiceLive

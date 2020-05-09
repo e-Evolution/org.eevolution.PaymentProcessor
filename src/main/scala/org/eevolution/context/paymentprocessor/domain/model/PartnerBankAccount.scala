@@ -17,12 +17,13 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, List, Table, TableDirect, YesNo}
 
 /**
   * Partner Bank Account
+  *
   * @param partnerBankAccountId
   * @param partnerId
   * @param bankId
@@ -49,7 +50,7 @@ import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTi
   * @param partnerBankAcctUse
   * @param creditCardExpMM
   * @param creditCardExpYY
-  * @param CreditCardNumber
+  * @param creditCardNumber
   * @param creditCardType
   * @param creditCardVV
   * @param isACH
@@ -59,42 +60,41 @@ import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTi
   * @param routingNo
   * @param iban
   */
-case class PartnerBankAccount(partnerBankAccountId: Id,
-                              partnerId: TableDirect,
-                              bankId: TableDirect,
-                              uuid: String,
-                              tenantId: TableDirect,
-                              organizationId: TableDirect = 0,
-                              isActive: YesNo = true,
-                              created: DateTime = Instant.now,
-                              createdBy: Table,
-                              updated: DateTime = Instant.now,
-                              updatedBy: Table,
-                              accountNo: String,
-                              accountName: String,
-                              accountCity: String,
-                              accountCountry: String,
-                              accountState: String,
-                              accountStreet: String,
-                              accountEmail: String,
-                              accountDriverLicense: String,
-                              accountSocialSecurityNo: String,
-                              accountZip: String,
-                              userId: TableDirect,
-                              bankAccountType: List,
-                              partnerBankAcctUse: List,
-                              creditCardExpMM: Int,
-                              creditCardExpYY: Int,
-                              CreditCardNumber: String,
-                              creditCardType: String,
-                              creditCardVV: String,
-                              isACH: YesNo,
-                              isPayrollAccount: YesNo,
-                              addressVerified: List,
-                              zipVerified: List,
-                              routingNo: List,
-                              iban: String
-                             )
+case class PartnerBankAccount(partnerBankAccountId: Id
+                              , partnerId: TableDirect
+                              , bankId: TableDirect
+                              , uuid: String
+                              , tenantId: TableDirect
+                              , organizationId: TableDirect = 0
+                              , isActive: YesNo = true
+                              , created: DateTime = LocalDateTime.now
+                              , createdBy: Table
+                              , updated: DateTime = LocalDateTime.now
+                              , updatedBy: Table
+                              , accountNo: String
+                              , accountName: String
+                              , accountCity: String
+                              , accountCountry: String
+                              , accountState: String
+                              , accountStreet: String
+                              , accountEmail: String
+                              , accountDriverLicense: String
+                              , accountSocialSecurityNo: String
+                              , accountZip: String
+                              , userId: TableDirect
+                              , bankAccountType: List
+                              , partnerBankAcctUse: List
+                              , creditCardExpMM: Id
+                              , creditCardExpYY: Id
+                              , creditCardNumber: String
+                              , creditCardType: String
+                              , creditCardVV: String
+                              , isACH: YesNo
+                              , isPayrollAccount: YesNo
+                              , addressVerified: List
+                              , zipVerified: List
+                              , routingNo: List
+                              , iban: String)
   extends DomainModel with ActiveEnabled
     with Identifiable
     with Traceable {
@@ -110,76 +110,41 @@ case class PartnerBankAccount(partnerBankAccountId: Id,
 
 object PartnerBankAccount {
 
-  def create(partnerBankAccountId: Id,
-             partnerId: TableDirect,
-             bankId: TableDirect,
-             uuid: String,
-             tenantId: TableDirect,
-             organizationId: TableDirect = 0,
-             isActive: YesNo = true,
-             created: DateTime = Instant.now,
-             createdBy: Table,
-             updated: DateTime = Instant.now,
-             updatedBy: Table,
-             accountNo: String,
-             accountName: String,
-             accountCity: String,
-             accountCountry: String,
-             accountState: String,
-             accountStreet: String,
-             accountEmail: String,
-             accountDriverLicense: String,
-             accountSocialSecurityNo: String,
-             accountZip: String,
-             userId: TableDirect,
-             bankAccountType: List,
-             partnerBankAcctUse: List,
-             creditCardExpMM: Int,
-             creditCardExpYY: Int,
-             CreditCardNumber: String,
-             creditCardType: String,
-             creditCardVV: String,
-             isACH: YesNo,
-             isPayrollAccount: YesNo,
-             addressVerified: List,
-             zipVerified: List,
-             routingNo: List,
-             iban: String
-            ): PartnerBankAccount =
-    PartnerBankAccount(partnerBankAccountId,
-    partnerId,
-    bankId,
-    uuid,
-    tenantId,
-    organizationId,
-    isActive,
-    created,
-    createdBy,
-    updated,
-    updatedBy,
-    accountNo,
-    accountName,
-    accountCity,
-    accountCountry,
-    accountState,
-    accountStreet,
-    accountEmail,
-    accountDriverLicense,
-    accountSocialSecurityNo,
-    accountZip,
-    userId,
-    bankAccountType,
-    partnerBankAcctUse,
-    creditCardExpMM,
-    creditCardExpYY,
-    CreditCardNumber,
-    creditCardType,
-    creditCardVV,
-    isACH,
-    isPayrollAccount,
-    addressVerified,
-    zipVerified,
-    routingNo,
-    iban
-  )
+  def create(partnerBankAccountId: Id
+             , partnerId: TableDirect
+             , bankId: TableDirect
+             , uuid: String
+             , tenantId: TableDirect
+             , organizationId: TableDirect = 0
+             , isActive: YesNo = true
+             , created: DateTime = LocalDateTime.now
+             , createdBy: Table
+             , updated: DateTime = LocalDateTime.now
+             , updatedBy: Table
+             , accountNo: String
+             , accountName: String
+             , accountCity: String
+             , accountCountry: String
+             , accountState: String
+             , accountStreet: String
+             , accountEmail: String
+             , accountDriverLicense: String
+             , accountSocialSecurityNo: String
+             , accountZip: String
+             , userId: TableDirect
+             , bankAccountType: List
+             , partnerBankAcctUse: List
+             , creditCardExpMM: Id
+             , creditCardExpYY: Id
+             , creditCardNumber: String
+             , creditCardType: String
+             , creditCardVV: String
+             , isACH: YesNo
+             , isPayrollAccount: YesNo
+             , addressVerified: List
+             , zipVerified: List
+             , routingNo: List
+             , iban: String): PartnerBankAccount = {
+    PartnerBankAccount(partnerBankAccountId, partnerId, bankId, uuid, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, accountNo, accountName, accountCity, accountCountry, accountState, accountStreet, accountEmail, accountDriverLicense, accountSocialSecurityNo, accountZip, userId, bankAccountType, partnerBankAcctUse, creditCardExpMM, creditCardExpYY, creditCardNumber, creditCardType, creditCardVV, isACH, isPayrollAccount, addressVerified, zipVerified, routingNo, iban)
+  }
 }

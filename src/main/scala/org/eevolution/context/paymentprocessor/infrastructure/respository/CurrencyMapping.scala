@@ -33,8 +33,6 @@ trait CurrencyMapping {
       _.createdBy -> "CreatedBy",
       _.updated -> "Updated",
       _.updatedBy -> "UpdatedBy",
-      _.value -> "Value",
-      _.name -> "Name",
       _.description -> "Description",
       _.costingPrecision -> "CostingPrecision",
       _.curSymbol -> "CurSymbol",

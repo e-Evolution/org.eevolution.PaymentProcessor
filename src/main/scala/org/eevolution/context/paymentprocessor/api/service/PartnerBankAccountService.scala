@@ -33,15 +33,16 @@ object PartnerBankAccountService {
 
   trait Service {
 
-    def getById(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String): RIO[Any, Option[PartnerBankAccount]]
+    def getById(partnerId: Id, bankId: Id, userId: Id, accountName: String, accountEmail: String, creditCardNumber: String): RIO[Any, Option[PartnerBankAccount]]
 
-    def create(partnerId: Id, bankId: Id, userId: Id, accountEmail: String, accountNo: String, accountName: String, creditCardType: String, creditCardNumber: String, creditCardExpMM: Int, creditCardExpYY: Int, creditCardVV: String): RIO[Any, Option[PartnerBankAccount]]
+    def create(partnerId: Id, bankId: Id, userId: Id, accountName: String, accountEmail: String, creditCardType: String, creditCardNumber: String, creditCardExpMM: Id, creditCardExpYY: Id, creditCardVV: String): RIO[Any, Option[PartnerBankAccount]]
 
-    def save(partnerBankAccount: PartnerBankAccount): RIO[Any,Option[ PartnerBankAccount]]
+    def save(partnerBankAccount: PartnerBankAccount): RIO[Any, Option[PartnerBankAccount]]
   }
 
 
-  def live: ZLayer[ PartnerBankAccountRepository, Throwable, Has[Service]] =  ZLayer.fromService[PartnerBankAccountRepository.Service, Service] {  (partnerBankAccountRepository) => PartnerBankAccountServiceLive(partnerBankAccountRepository)}
+  def live: ZLayer[PartnerBankAccountRepository, Throwable, Has[Service]] = ZLayer.fromService[PartnerBankAccountRepository.Service, Service] { (partnerBankAccountRepository) => PartnerBankAccountServiceLive(partnerBankAccountRepository) }
+
   //ZLayer.fromServices[Context.Service, PartnerBankAccountRepository.Service, Service] { (contextService, partnerBankAccountRepository) =>PartnerBankAccountServiceLive(contextService, partnerBankAccountRepository)}
 
 }

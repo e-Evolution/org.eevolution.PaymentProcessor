@@ -34,8 +34,9 @@ trait UserMapping {
       _.updated -> "Updated",
       _.updatedBy -> "UpdatedBy",
       _.name -> "Name",
-      _.email -> "email",
+      _.email -> "Email",
       _.password -> "Password",
+      _.salt -> "Salt",
       _.description -> "Description",
       _.partnerId -> "C_BPartner_ID",
       _.uuid -> "UUID")

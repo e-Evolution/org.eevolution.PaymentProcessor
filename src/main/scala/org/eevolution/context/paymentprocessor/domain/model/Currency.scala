@@ -16,9 +16,9 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
 
-import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, Table, TableDirect, YesNo, Number}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, Number, Table, TableDirect, YesNo}
 
 /**
   * Currency Entity
@@ -30,33 +30,28 @@ import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTi
   * @param createdBy   Created By
   * @param updated     Updated
   * @param updatedBy   Updated By
-  * @param value       Value
-  * @param name        Name
   * @param description Description
   * @param uuid        UUID
   */
-case class Currency(currencyId: Id,
-                    tenantId: TableDirect,
-                    organizationId: TableDirect = 0,
-                    isActive: YesNo = true,
-                    created: DateTime = Instant.now(),
-                    createdBy: Table,
-                    updated: DateTime = Instant.now(),
-                    updatedBy: Table,
-                    value: String,
-                    name: String,
-                    description: String,
-                    costingPrecision: Int,
-                    curSymbol : String,
-                    emuEntryDate : String,
-                    emuRate: Number,
-                    isEMUMember : YesNo =  false,
-                    isEuro : YesNo,
-                    isoCode:String,
-                    roundOffFactor: Number,
-                    stdPrecision : Int,
-                    uuid: String
-                   ) extends DomainModel
+case class Currency(currencyId: Id
+                    , tenantId: TableDirect
+                    , organizationId: TableDirect = 0
+                    , isActive: YesNo = true
+                    , created: DateTime = LocalDateTime.now
+                    , createdBy: Table
+                    , updated: DateTime = LocalDateTime.now
+                    , updatedBy: Table
+                    , description: String
+                    , costingPrecision: Id
+                    , curSymbol: String
+                    , emuEntryDate: String
+                    , emuRate: Option[Number] = Some(BigDecimal(0))
+                    , isEMUMember: YesNo = false
+                    , isEuro: YesNo
+                    , isoCode: String
+                    , roundOffFactor: Option[Number] = Some(BigDecimal(0))
+                    , stdPrecision: Id
+                    , uuid: String) extends DomainModel
 
   with ActiveEnabled
   with Identifiable
@@ -73,26 +68,6 @@ case class Currency(currencyId: Id,
 
 object Currency {
   //implicit lazy val jsonFormat = Jsonx.formatCaseClass[Currency]
-  def create(currencyId: Id,
-             tenantId: TableDirect,
-             organizationId: TableDirect = 0,
-             isActive: YesNo = true,
-             created: DateTime = Instant.now(),
-             createdBy: Table,
-             updated: DateTime = Instant.now(),
-             updatedBy: Table,
-             value: String,
-             name: String,
-             description: String,
-             costingPrecision: Int,
-             curSymbol : String,
-             emuEntryDate : String,
-             emuRate: Number,
-             isEMUMember : YesNo =  false,
-             isEuro : YesNo,
-             isoCode:String,
-             roundOffFactor: Number,
-             stdPrecision : Int,
-             uuid: String) = Currency(currencyId, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, value, name, description, costingPrecision, curSymbol, emuEntryDate, emuRate, isEuro ,isEuro,isoCode,roundOffFactor ,stdPrecision,uuid)
+  def create(currencyId: Id, tenantId: TableDirect, organizationId: TableDirect = 0, isActive: YesNo = true, created: DateTime = LocalDateTime.now, createdBy: Table, updated: DateTime = LocalDateTime.now, updatedBy: Table, description: String, costingPrecision: Id, curSymbol: String, emuEntryDate: String, emuRate: Number, isEMUMember: YesNo = false, isEuro: YesNo, isoCode: String, roundOffFactor: Number, stdPrecision: Id, uuid: String): Currency = Currency(currencyId, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, description, costingPrecision, curSymbol, emuEntryDate, Option(emuRate), isEuro, isEuro, isoCode, Option(roundOffFactor), stdPrecision, uuid)
 }
 

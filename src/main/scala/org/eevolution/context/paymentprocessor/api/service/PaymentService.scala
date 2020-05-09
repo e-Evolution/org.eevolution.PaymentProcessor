@@ -19,7 +19,7 @@ package org.eevolution.context.paymentprocessor.api.service
 import org.eevolution.context.paymentprocessor.api.repository.PaymentRepository
 import org.eevolution.context.paymentprocessor.api.repository.PaymentRepository.PaymentRepository
 import org.eevolution.context.paymentprocessor.domain.service.PaymentServiceLive
-import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{BankAccount, Currency, DocumentType, Id, List, Partner, Payment}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, Payment}
 import zio.{Has, RIO, ZLayer}
 
 /**
@@ -34,26 +34,9 @@ object PaymentService {
     def getById(id: Id): RIO[Any, Option[Payment]]
 
     def save(payment: Payment): RIO[Any, Option[Payment]]
-
-    def createPayment(documentType: DocumentType,
-                      description: String,
-                      bankAccount: BankAccount,
-                      partner: Partner,
-                      currency: Currency): RIO[Any, Option[Payment]]
-
-    def createPaymentWithCreditCard(documentType: DocumentType,
-                                    description: String,
-                                    bankAccount: BankAccount,
-                                    partner: Partner,
-                                    currency: Currency,
-                                    creditCardType: List,
-                                    creditCard: String,
-                                    creditCardNumber: String,
-                                    creditCardExpMM: Int,
-                                    creditCardExpYY: Int,
-                                    verificationCode: String): RIO[Any, Option[Payment]]
   }
 
+  def live: ZLayer[PaymentRepository, Throwable, Has[Service]] = ZLayer.fromService[PaymentRepository.Service, Service](paymentRepository => PaymentServiceLive(paymentRepository))
 
-  def live: ZLayer[PaymentRepository, Throwable, Has[Service]] = ZLayer.fromService[PaymentRepository.Service, Service] ( paymentRepository => PaymentServiceLive(paymentRepository)) //ZLayer.fromServices[Context.Service, PaymentRepository.Service, Service] { (contextService, paymentRepository) =>PaymentServiceLive(contextService, paymentRepository)}
+  //ZLayer.fromServices[Context.Service, PaymentRepository.Service, Service] { (contextService, paymentRepository) =>PaymentServiceLive(contextService, paymentRepository)}
 }

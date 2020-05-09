@@ -13,10 +13,9 @@
   * Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
   **/
-
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, List, Table, TableDirect, YesNo}
 
@@ -40,9 +39,9 @@ case class DocumentType(documentTypeId: Id,
                         tenantId: TableDirect,
                         organizationId: TableDirect,
                         isActive: YesNo = true,
-                        created: DateTime = Instant.now(),
+                        created: DateTime = LocalDateTime.now,
                         createdBy: Table,
-                        updated: DateTime = Instant.now(),
+                        updated: DateTime = LocalDateTime.now,
                         updatedBy: Table,
                         value: String,
                         name: String,

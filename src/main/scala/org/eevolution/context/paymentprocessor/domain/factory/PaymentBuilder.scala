@@ -17,7 +17,7 @@
 
 package org.eevolution.context.paymentprocessor.domain.factory
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 import org.compiere.util.Env
 import org.eevolution.context.paymentprocessor.domain.model.Payment
@@ -505,32 +505,42 @@ object PaymentBuilder {
       WriteOffAmount <: WithWriteOffAmount : IsOnce,
       DiscountAmount <: WithDiscountAmount : IsOnce,
     ](): Task[Option[Payment]] =
-        for {
-          //tenant <- environment.get.getTenant
-          //organization <- environment.get.getOrganization
-          //user <- environment.get.getUser
-          description <- Task(maybeDescription.get)
-          bankAccount <- Task(maybeBankAccount.get)
-          dateTrx <- Task(maybeDateTrx.get)
-          dateAccount <- Task(maybeDateAccount.get)
-          currency <- Task(maybeCurrency.get)
-          payAmount <- Task(maybePayAmount.get)
-          writeOffAmount <- Task(maybeWriteOffAmount.get)
-          discountAmount <- Task(maybeDiscountAmount.get)
-          documentType <- Task(maybeDocumentType.get)
-          partner <- Task(maybePartner.get)
-          tenderType <- Task(maybeTenderType.get)
-          transactionType <- Task(maybeTrxType.get)
-          onlineProcessing <- Task(maybeOnlineProcessing.get)
-          creditCardType <- Task(maybeCreditCardType.get)
-          creditCardExpMM <- Task(maybeCreditCardExpMM.get)
-          creditCardExpYY <- Task(maybeCreditCardExpYY.get)
-          creditCardNumber <- Task(maybeCreditCardNumber.get)
-          creditCardVerificationCode <- Task(maybeCreditCardVerificationCode.get)
-          payment <- Task(
-            Option(Payment.create(0, "", Env.getAD_Client_ID(Env.getCtx), Env.getAD_Org_ID(Env.getCtx), true, Instant.now, Env.getAD_User_ID(Env.getCtx), Instant.now, Env.getAD_User_ID(Env.getCtx), "", "", "", 0, "", "", "", "", "", "", "", 0, bankAccount.Id, partner.Id, 0, 0, 0, 0, 0, currency.Id, documentType.Id, 0.0, "", 0, 0, 0, 0, 0, creditCardType, creditCardExpMM, creditCardExpYY, creditCardNumber, creditCardVerificationCode, dateTrx, dateAccount, description, discountAmount, "", DocumentStatus.Drafted.value, "", false, false, false, false, true, false, false, false, false, false, "", onlineProcessing, "", 0.0, payAmount, "", "N", false, 0, "N", "", "", "", "", false, 0, 0, 0, "", "", "", "", "", "", 0, "", 0.0, tenderType, transactionType, 0, 0, 0, 0, "", writeOffAmount))
+      for {
+        //tenant <- environment.get.getTenant
+        //organization <- environment.get.getOrganization
+        //user <- environment.get.getUser
+        description <- Task(maybeDescription.get)
+        bankAccount <- Task(maybeBankAccount.get)
+        dateTrx <- Task(maybeDateTrx.get)
+        dateAccount <- Task(maybeDateAccount.get)
+        currency <- Task(maybeCurrency.get)
+        payAmount <- Task(maybePayAmount.get)
+        writeOffAmount <- Task(maybeWriteOffAmount.get)
+        discountAmount <- Task(maybeDiscountAmount.get)
+        documentType <- Task(maybeDocumentType.get)
+        partner <- Task(maybePartner.get)
+        tenderType <- Task(maybeTenderType.get)
+        transactionType <- Task(maybeTrxType.get)
+        onlineProcessing <- Task(maybeOnlineProcessing.get)
+        creditCardType <- Task(maybeCreditCardType.get)
+        creditCardExpMM <- Task(maybeCreditCardExpMM.get)
+        creditCardExpYY <- Task(maybeCreditCardExpYY.get)
+        creditCardNumber <- Task(maybeCreditCardNumber.get)
+        creditCardVerificationCode <- Task(maybeCreditCardVerificationCode.get)
+        payment <- Task.effectTotal(
+          Option(Payment.create(
+            0, "", Env.getAD_Client_ID(Env.getCtx), Env.getAD_Org_ID(Env.getCtx), true, LocalDateTime.now, Env.getAD_User_ID(Env.getCtx), LocalDateTime.now, Env.getAD_User_ID(Env.getCtx),
+            "", "", "", 0, "", "", "", "", "", "", "", 0, bankAccount.Id, partner.Id,
+            0, 0, 0, 0, 0, currency.Id, documentType.Id, BigDecimal(0), "", 0, 0, 0, 0, 0, creditCardType,
+            creditCardExpMM, creditCardExpYY, creditCardNumber, creditCardVerificationCode, dateTrx, dateAccount, description, discountAmount,
+            "CO", DocumentStatus.Drafted.value, "", false, false, false, false, true,
+            false, false, false, false, false, "", onlineProcessing, "",
+            BigDecimal(0), payAmount, "", "N", false, 0, "N", "", "", "", "", false, 0,
+            0, 0, "", "", "", "", "", "", 0, "", BigDecimal(0), tenderType, transactionType,
+            0, 0, 0, 0, "", writeOffAmount)
           )
-        } yield payment
-    }
+        )
+      } yield payment
+  }
 
 }

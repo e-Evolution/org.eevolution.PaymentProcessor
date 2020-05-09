@@ -16,10 +16,10 @@
 
 package org.eevolution.context.paymentprocessor.domain
 
-import java.time.Instant
 import java.util.UUID
 
-import zio.{Task, ZIO}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Table}
+import zio.Task
 
 /**
   * Package with API for Domain Model
@@ -92,18 +92,18 @@ package object model {
 
     type Traceable
 
-    val updatedBy: Int
-    val createdBy: Int
-    val created: Instant
-    val updated: Instant
+    val updatedBy: Table
+    val createdBy: Table
+    val created: DateTime
+    val updated: DateTime
 
-    def getCreatedBy: Int = createdBy
+    def getCreatedBy: Table = createdBy
 
-    def getCreated: Instant = created
+    def getCreated: DateTime = created
 
-    def getUpdatedBy: Int = updatedBy
+    def getUpdatedBy: Table = updatedBy
 
-    def getUpdated: Instant = updated
+    def getUpdated: DateTime = updated
 
   }
 

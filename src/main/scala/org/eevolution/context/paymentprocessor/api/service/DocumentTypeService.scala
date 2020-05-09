@@ -34,6 +34,7 @@ object DocumentTypeService {
     def getById(id: Id): RIO[Context, Option[DocumentType]]
   }
 
-  def live : ZLayer[DocumentTypeRepository, Throwable, Has[Service]]  = ZLayer.fromService[DocumentTypeRepository.Service, Service] {   (documentTypeRepository ) => DocumentTypeServiceLive(documentTypeRepository )}
+  def live: ZLayer[DocumentTypeRepository, Throwable, Has[Service]] = ZLayer.fromService[DocumentTypeRepository.Service, Service] { (documentTypeRepository) => DocumentTypeServiceLive(documentTypeRepository) }
+
   //ZLayer.fromServices[Context.Service , DocumentTypeRepository.Service, Service] {   (context , documentTypeRepository ) =>DocumentTypeServiceLive(context , documentTypeRepository )}
 }

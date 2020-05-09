@@ -34,5 +34,5 @@ object BankService {
     def getById(id: Id): RIO[Any, Option[Bank]]
   }
 
-  def live : ZLayer[BankRepository, Nothing, Has[Service]] =   ZLayer.fromService[BankRepository.Service, Service] {  bankRepository => BankServiceLive (bankRepository)}
+  def live: ZLayer[BankRepository, Nothing, Has[Service]] = ZLayer.fromService[BankRepository.Service, Service] { bankRepository => BankServiceLive(bankRepository) }
 }

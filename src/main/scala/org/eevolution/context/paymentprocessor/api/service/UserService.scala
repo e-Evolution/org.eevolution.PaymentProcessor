@@ -17,9 +17,6 @@
 package org.eevolution.context.paymentprocessor.api.service
 
 
-
-import org.eevolution.context.paymentprocessor.api.Context
-import org.eevolution.context.paymentprocessor.api.Context.Context
 import org.eevolution.context.paymentprocessor.api.repository.UserRepository
 import org.eevolution.context.paymentprocessor.api.repository.UserRepository.UserRepository
 import org.eevolution.context.paymentprocessor.domain.service.UserServiceLive
@@ -35,37 +32,15 @@ object UserService {
 
   trait Service {
     def getById(id: Id): RIO[Any, Option[User]]
-    def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): RIO[Any, Option[User]]
-    def create(partner : Partner , userName : String , accountEmail : String , userPassword : String) : RIO[Any,Option[ User]]
-    def save (user:User) : RIO[Any, Option[User]]
+
+    def getUser(partnerId: Id, userName: String, accountEmail: String): RIO[Any, Option[User]]
+
+    def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): RIO[Any, Option[User]]
+
+    def save(user: User): RIO[Any, Option[User]]
   }
 
-  def live : ZLayer[UserRepository, Nothing, Has[Service]] =  ZLayer.fromService[ UserRepository.Service, Service] { ( userRepository) => UserServiceLive (userRepository)}  //ZLayer.fromServices[Context.Service , UserRepository.Service, Service] { (context, userRepository) =>UserServiceLive (context, userRepository)}
-
-  //trait Live extends api.service.UserServiceAPI
-
-  /*object Live extends Live {
-     new Service {
-      override def getById(id: Id): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getById(id))
-
-      override def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getUser(partnerId,userName,accountEmail, password))
-
-      override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User] =  ZIO.accessM(_.get.create(partner,userName,accountEmail,userPassword))
-
-      override def save(user: User): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.save(user))
-    }
-  }
-
-  def live: NoDeps[Nothing, Has[Live.type]] = ZLayer.succeed(Live)*/
-
-  /*def getById(id: Id): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getById(id))
-
-   def getUser(partnerId: Id, userName: String, accountEmail: String, password: String): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.getUser(partnerId,userName,accountEmail, password))
-
-   def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): ZIO[UserServiceEnvironment, Any, User] = ZIO.accessM(_.get.create(partner,userName,accountEmail,userPassword))
-
-   def save(user: User): ZIO[UserServiceEnvironment, Throwable, User] = ZIO.accessM(_.get.save(user))*/
-
+  def live: ZLayer[UserRepository, Nothing, Has[Service]] = ZLayer.fromService[UserRepository.Service, Service] { (userRepository) => UserServiceLive(userRepository) } //ZLayer.fromServices[Context.Service , UserRepository.Service, Service] { (context, userRepository) =>UserServiceLive (context, userRepository)}
 }
 
 

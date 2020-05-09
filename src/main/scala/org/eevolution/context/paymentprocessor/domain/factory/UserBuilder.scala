@@ -17,7 +17,7 @@
 package org.eevolution.context.paymentprocessor.domain.factory
 
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 import org.compiere.util.Env
 import org.eevolution.context.paymentprocessor.domain
@@ -62,7 +62,7 @@ object UserBuilder {
         WithPasswordTracking](maybePartnerId = Some(partnerId))
 
 
-    def WithDescription[Description <: WithDescriptionTracking: IsMandatory](description: String) =
+    def WithDescription[Description <: WithDescriptionTracking : IsMandatory](description: String) =
       copy[WithNameTracking,
         WithPartnerIdTracking,
         Once,
@@ -83,27 +83,27 @@ object UserBuilder {
         WithEmailTracking,
         Once](maybePassword = Some(password))
 
-  def build[
-    Name <: WithNameTracking: IsOnce,
-    PartnerId <: WithPartnerIdTracking: IsOnce,
-    Description <: WithDescriptionTracking : IsOnce,
-    Email <: WithEmailTracking : IsOnce,
-    Password <: WithPasswordTracking : IsOnce
-  ](): Task[Option[User]] =  {
+    def build[
+      Name <: WithNameTracking : IsOnce,
+      PartnerId <: WithPartnerIdTracking : IsOnce,
+      Description <: WithDescriptionTracking : IsOnce,
+      Email <: WithEmailTracking : IsOnce,
+      Password <: WithPasswordTracking : IsOnce
+    ](): Task[Option[User]] = {
       for {
         //tenant <- environment.get[Has[Context]].get.get.getTenant
         //organization <- environment.get[Has[Context]].get.get.getOrganization
         //user <- environment.get[Has[Context.Service]].get.get.getUser
         name <- Task(maybeName.get)
         partnerId <- Task(maybePartnerId.get)
-        description <- Task(maybeDescription.get)
+        description <- Task(maybeDescription.getOrElse(""))
         email <- Task(maybeEmail.get)
         password <- Task(maybePassword.get)
-        user <- Task(
-        Option(domain.model.User.create(0, partnerId ,Env.getAD_Client_ID(Env.getCtx), 0, true, Instant.now() ,Env.getAD_User_ID(Env.getCtx) , Instant.now() ,Env.getAD_User_ID(Env.getCtx),name,description,email,password, null )))
+        user <- Task.effectTotal(
+          Option(domain.model.User.create(0, partnerId, Env.getAD_Client_ID(Env.getCtx), 0, true, LocalDateTime.now(), Env.getAD_User_ID(Env.getCtx), LocalDateTime.now(), Env.getAD_User_ID(Env.getCtx), name, description, email, password, null, null)))
       } yield user
+    }
   }
-}
 
 }
 

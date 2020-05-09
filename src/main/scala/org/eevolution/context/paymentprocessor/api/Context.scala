@@ -1,3 +1,19 @@
+/**
+  * Copyright (C) 2003-2020, e-Evolution Consultants S.A. , http://www.e-evolution.com
+  * This program is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  * You should have received a copy of the GNU General Public License
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  * Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
+  * Created by victor.perez@e-evolution.com , www.e-evolution.com
+  **/
+
 package org.eevolution.context.paymentprocessor.api
 
 import java.util.Properties
@@ -7,8 +23,8 @@ import org.eevolution.context.paymentprocessor.api.repository.OrganizationReposi
 import org.eevolution.context.paymentprocessor.api.repository.TenantRepository.TenantRepository
 import org.eevolution.context.paymentprocessor.api.repository.UserRepository.UserRepository
 import org.eevolution.context.paymentprocessor.api.repository.{OrganizationRepository, TenantRepository, UserRepository}
-import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Organization, Payment, Tenant, User}
-import zio.{Has, RIO, Task, ZEnv, ZLayer}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Organization, Tenant, User}
+import zio.{Has, RIO, Task, ZLayer}
 
 import scala.util.Try
 
@@ -21,9 +37,9 @@ object Context {
   trait Service {
     def getContext: Task[Option[Properties]] = ???
 
-    def setTransaction(trxName: String):Task[Option[Trx]] = ???
+    def setTransaction(trxName: String): Task[Option[Trx]] = ???
 
-    def getTransaction:  Task[Option[Trx]] = ???
+    def getTransaction: Task[Option[Trx]] = ???
 
     def getTenant: RIO[TenantRepository, Option[Tenant]] = ???
 
@@ -33,9 +49,9 @@ object Context {
   }
 
 
-  def live : ZLayer[TenantRepository with OrganizationRepository with UserRepository, Throwable, Has[Service]] =
+  def live: ZLayer[TenantRepository with OrganizationRepository with UserRepository, Throwable, Has[Service]] =
     ZLayer.fromServices[TenantRepository.Service, OrganizationRepository.Service, UserRepository.Service, Service] {
-      (tenantRepository, organizationRepository, userRepository ) => Live(tenantRepository, organizationRepository , userRepository)
+      (tenantRepository, organizationRepository, userRepository) => Live(tenantRepository, organizationRepository, userRepository)
     }
 
 }

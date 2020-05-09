@@ -27,7 +27,7 @@ trait PaymentMapping {
   def quotePayment = quote {
     querySchema[Payment]("C_Payment",
       _.paymentId -> "C_Payment_ID",
-      _.uuid -> "UUID" ,
+      _.uuid -> "UUID",
       _.tenantId -> "AD_Client_ID",
       _.organizationId -> "AD_Org_ID",
       _.isActive -> "IsActive",

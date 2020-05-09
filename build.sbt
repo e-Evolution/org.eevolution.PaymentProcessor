@@ -15,7 +15,7 @@
   **/
 
 name := "org.eevolution.PaymentProcessor"
-version := "0.1"
+version := "1.0"
 fork := true
 fork in Test := true
 
@@ -32,13 +32,12 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio" % "1.0.0-RC18-2",
   "dev.zio" %% "zio-test"     % "1.0.0-RC18-2" % "test",
   "dev.zio" %% "zio-test-sbt" % "1.0.0-RC18-2" % "test",
-  "io.getquill" %% "quill-jdbc" % "3.5.0",
-  "org.postgresql" % "postgresql" % "42.2.8"
+  "io.getquill" %% "quill-jdbc" % "3.5.1",
+  "org.postgresql" % "postgresql" % "42.2.11",
+  "org.slf4j" % "slf4j-api" % "1.7.21",
+  "org.slf4j" % "slf4j-jdk14" % "1.7.21",
+  "org.slf4j" % "slf4j-simple" % "1.7.21"
 )
-
-libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.21"
-libraryDependencies += "org.slf4j" % "slf4j-jdk14" % "1.7.21"
-libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.21"
 
 testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
 
@@ -54,6 +53,8 @@ Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.ScalaLibrary
 
 val sourceAdempiere = "/Users/e-Evolution/Develop/ADempiere/develop"
 
+unmanagedJars in Compile ++= (file("/lib") * "*.jar").classpath
+unmanagedJars in Compile ++= (file("/Users/e-Evolution/Develop/ADempiere/org.eevolution.LMX/target") * "*.jar").classpath
 unmanagedJars in Compile ++= (file(sourceAdempiere + "/lib") * "*.jar").classpath
 unmanagedJars in Compile ++= (file(sourceAdempiere + "/packages") * "*.jar").classpath
 unmanagedJars in Compile ++= (file("lib") * "*.jar").classpath
@@ -76,7 +77,7 @@ scalaSource in Compile := baseDirectory.value / "src" / "main" / "scala"
 scalaSource in Test := baseDirectory.value  / "src" / "test" / "scala"
 
 
-assemblyJarName in assembly := "org.eevolution.PaymentProcessor.jar"
+assemblyJarName in assembly := "org.eevolution.paymentprocessor.jar"
 
 assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = true, includeDependency = false)
 

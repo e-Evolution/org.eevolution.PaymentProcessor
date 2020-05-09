@@ -28,15 +28,16 @@ import zio.{Has, Task, ZLayer}
   */
 object TenantService {
 
-   type TenantService = Has[TenantService.Service]
+  type TenantService = Has[TenantService.Service]
 
 
   trait Service {
     def getById(id: Id): Task[Option[Tenant]]
   }
-   def live : ZLayer[TenantRepository, Nothing, Has[Service]]  =   ZLayer.fromService[TenantRepository.Service, Service] {  tenantRepository =>
-     new Service {
-       override def getById(id: Id) : Task[Option[Tenant]] = tenantRepository.getById(id) //tenantRepository.get.getById(id)
-     }
+
+  def live: ZLayer[TenantRepository, Nothing, Has[Service]] = ZLayer.fromService[TenantRepository.Service, Service] { tenantRepository =>
+    new Service {
+      override def getById(id: Id): Task[Option[Tenant]] = tenantRepository.getById(id) //tenantRepository.get.getById(id)
+    }
   }
 }

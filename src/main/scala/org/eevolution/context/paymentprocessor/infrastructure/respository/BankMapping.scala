@@ -37,7 +37,7 @@ trait BankMapping {
       _.bankType -> "BankType",
       _.partnerId -> "C_BPartner_ID",
       _.locationId -> "C_Location_ID",
-      _.description-> "Description",
+      _.description -> "Description",
       _.isOwnBank -> "IsOwnBank",
       _.routingNo -> "RoutingNo",
       _.swiftCode -> "SwiftCode",

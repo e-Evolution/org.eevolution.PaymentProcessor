@@ -16,7 +16,7 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
 
 import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
 
@@ -34,7 +34,21 @@ import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
   * @param description Description
   * @param uuid        UUID
   */
-case class User(userId: Id, partnerId: Id, tenantId: TableDirect, organizationId: TableDirect, isActive: YesNo = true, created: DateTime = Instant.now(), createdBy: Table, updated: DateTime = Instant.now(), updatedBy: Table, name: String, description: String, email: String, password: String, uuid: String) extends DomainModel
+case class User(userId: Id
+                , partnerId: Id
+                , tenantId: TableDirect
+                , organizationId: TableDirect
+                , isActive: YesNo = true
+                , created: DateTime = LocalDateTime.now
+                , createdBy: Table
+                , updated: DateTime = LocalDateTime.now
+                , updatedBy: Table
+                , name: String
+                , description: String
+                , email: String
+                , password: String
+                , salt: String
+                , uuid: String) extends DomainModel
 
   with ActiveEnabled
   with Identifiable
@@ -52,7 +66,7 @@ case class User(userId: Id, partnerId: Id, tenantId: TableDirect, organizationId
 object User {
   //implicit lazy val jsonFormat = Jsonx.formatCaseClass[Currency]
   def create(userId: Id,
-             partnerId : TableDirect,
+             partnerId: TableDirect,
              tenantId: TableDirect,
              organizationId: TableDirect,
              isActive: YesNo,
@@ -62,7 +76,8 @@ object User {
              updatedBy: Id,
              name: String,
              description: String,
-             email : String ,
+             email: String,
              password: String,
-             uuid: String) = User(userId, partnerId, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, name, description, email, password, uuid)
+             salt: String,
+             uuid: String) = User(userId, partnerId, tenantId, organizationId, isActive, created, createdBy, updated, updatedBy, name, description, email, password, salt, uuid)
 }

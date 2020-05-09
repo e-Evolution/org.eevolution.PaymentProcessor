@@ -17,9 +17,9 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
 
-import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, Table, TableDirect, YesNo}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
 
 /**
   * Bank Account Entity
@@ -54,9 +54,9 @@ case class BankAccount(bankAccountId: Id,
                        tenantId: TableDirect,
                        organizationId: TableDirect = 0,
                        isActive: YesNo = true,
-                       created: Instant = Instant.now,
+                       created: DateTime = LocalDateTime.now,
                        createdBy: Table,
-                       updated: Instant = Instant.now,
+                       updated: DateTime = LocalDateTime.now,
                        updatedBy: Table,
                        accountNo: String,
                        bankAccountType: String,
@@ -93,9 +93,9 @@ object BankAccount {
              tenantId: TableDirect,
              organizationId: TableDirect = 0,
              isActive: YesNo = true,
-             created: DateTime = Instant.now,
+             created: DateTime = LocalDateTime.now,
              createdBy: Table,
-             updated: DateTime = Instant.now,
+             updated: DateTime = LocalDateTime.now,
              updatedBy: Table,
              accountNo: String,
              bankAccountType: String,

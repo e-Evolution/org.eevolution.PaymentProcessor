@@ -22,6 +22,7 @@ import java.util.{Comparator, Properties}
 
 /**
   * Legacy Persistence Partner Bank Account Model
+  *
   * @param ctx
   * @param id
   * @param rs

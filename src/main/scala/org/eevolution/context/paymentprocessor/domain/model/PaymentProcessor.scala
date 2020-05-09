@@ -16,7 +16,9 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
+
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
 
 /**
   * Payment Processor Entity
@@ -57,32 +59,31 @@ import java.time.Instant
   * @param requireVV
   * @param userId
   * @param vendorId
-  * @param value
   * @param name
   * @param description
   */
-case class PaymentProcessor(paymentProcessorId: Int,
+case class PaymentProcessor(paymentProcessorId: Id,
                             uuid: String,
-                            tenantId: Int,
-                            organizationId: Int = 0,
-                            isActive: Boolean = true,
-                            created: Instant = Instant.now,
-                            createdBy: Int,
-                            updated: Instant = Instant.now,
-                            updatedBy: Int,
-                            acceptAMEX: Boolean = false,
-                            acceptATM: Boolean = false,
-                            acceptCheck: Boolean = false,
-                            acceptCorporate: Boolean = false,
-                            acceptDiners: Boolean = false,
-                            acceptDirectDebit: Boolean = false,
-                            acceptDirectDeposit: Boolean = false,
-                            acceptDiscover: Boolean = false,
-                            acceptMC: Boolean = false,
-                            acceptVisa: Boolean = false,
-                            sequenceId: Int,
-                            bankAccountId: Int,
-                            currencyId: Int,
+                            tenantId: TableDirect,
+                            organizationId: TableDirect = 0,
+                            isActive: YesNo = true,
+                            created: DateTime = LocalDateTime.now,
+                            createdBy: Table,
+                            updated: DateTime = LocalDateTime.now,
+                            updatedBy: Table,
+                            acceptAMEX: YesNo = false,
+                            acceptATM: YesNo = false,
+                            acceptCheck: YesNo = false,
+                            acceptCorporate: YesNo = false,
+                            acceptDiners: YesNo = false,
+                            acceptDirectDebit: YesNo = false,
+                            acceptDirectDeposit: YesNo = false,
+                            acceptDiscover: YesNo = false,
+                            acceptMC: YesNo = false,
+                            acceptVisa: YesNo = false,
+                            sequenceId: TableDirect,
+                            bankAccountId: TableDirect,
+                            currencyId: TableDirect,
                             commission: BigDecimal,
                             costPerTrx: BigDecimal,
                             hostAddress: String,
@@ -98,8 +99,7 @@ case class PaymentProcessor(paymentProcessorId: Int,
                             userId: String,
                             vendorId: String,
                             name: String,
-                            description: String
-                           )
+                            description: String)
   extends DomainModel with ActiveEnabled
     with Identifiable
     with Traceable {
@@ -115,28 +115,28 @@ case class PaymentProcessor(paymentProcessorId: Int,
 
 object PaymentProcessor {
 
-  def create(paymentProcessorId: Int,
+  def create(paymentProcessorId: Id,
              uuid: String,
-             tenantId: Int,
-             organizationId: Int = 0,
-             isActive: Boolean = true,
-             created: Instant = Instant.now,
-             createdBy: Int,
-             updated: Instant = Instant.now,
-             updatedBy: Int,
-             acceptAMEX: Boolean = false,
-             acceptATM: Boolean = false,
-             acceptCheck: Boolean = false,
-             acceptCorporate: Boolean = false,
-             acceptDiners: Boolean = false,
-             acceptDirectDebit: Boolean = false,
-             acceptDirectDeposit: Boolean = false,
-             acceptDiscover: Boolean = false,
-             acceptMC: Boolean = false,
-             acceptVisa: Boolean = false,
-             sequenceId: Int,
-             bankAccountId: Int,
-             currencyId: Int,
+             tenantId: TableDirect,
+             organizationId: TableDirect = 0,
+             isActive: YesNo = true,
+             created: DateTime = LocalDateTime.now,
+             createdBy: Table,
+             updated: DateTime = LocalDateTime.now,
+             updatedBy: Table,
+             acceptAMEX: YesNo = false,
+             acceptATM: YesNo = false,
+             acceptCheck: YesNo = false,
+             acceptCorporate: YesNo = false,
+             acceptDiners: YesNo = false,
+             acceptDirectDebit: YesNo = false,
+             acceptDirectDeposit: YesNo = false,
+             acceptDiscover: YesNo = false,
+             acceptMC: YesNo = false,
+             acceptVisa: YesNo = false,
+             sequenceId: TableDirect,
+             bankAccountId: TableDirect,
+             currencyId: TableDirect,
              commission: BigDecimal,
              costPerTrx: BigDecimal,
              hostAddress: String,

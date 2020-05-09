@@ -29,12 +29,11 @@ import zio.{Has, RIO, ZLayer}
 object CurrencyService {
 
 
-
   type CurrencyService = Has[CurrencyService.Service]
 
   trait Service {
     def getById(currencyId: Id): RIO[Any, Option[Currency]]
   }
 
-  def live: ZLayer[CurrencyRepository, Nothing, Has[Service]] = ZLayer.fromService[CurrencyRepository.Service, Service] { currencyRepository => CurrencyServiceLive(currencyRepository)} //ZLayer.fromServices[Context.Service, CurrencyRepository.Service, Service] { (contextService, currencyRepository) =>CurrencyServiceLive(contextService, currencyRepository)}
+  def live: ZLayer[CurrencyRepository, Nothing, Has[Service]] = ZLayer.fromService[CurrencyRepository.Service, Service] { currencyRepository => CurrencyServiceLive(currencyRepository) } //ZLayer.fromServices[Context.Service, CurrencyRepository.Service, Service] { (contextService, currencyRepository) =>CurrencyServiceLive(contextService, currencyRepository)}
 }

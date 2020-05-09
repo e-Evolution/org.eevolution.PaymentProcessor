@@ -18,25 +18,17 @@ package org.eevolution.context.paymentprocessor.api.service
 
 import org.eevolution.context.paymentprocessor.api.repository.PaymentProcessorRepository
 import org.eevolution.context.paymentprocessor.api.repository.PaymentProcessorRepository.PaymentProcessorRepository
-import org.eevolution.context.paymentprocessor.api.service.BankAccountService
 import org.eevolution.context.paymentprocessor.api.service.BankAccountService.BankAccountService
-import org.eevolution.context.paymentprocessor.api.service.BankService
 import org.eevolution.context.paymentprocessor.api.service.BankService.BankService
-import org.eevolution.context.paymentprocessor.api.service.CurrencyService
 import org.eevolution.context.paymentprocessor.api.service.CurrencyService.CurrencyService
 import org.eevolution.context.paymentprocessor.api.service.PartnerBankAccountService.PartnerBankAccountService
-import org.eevolution.context.paymentprocessor.api.service.PartnerService
 import org.eevolution.context.paymentprocessor.api.service.PartnerService.PartnerService
-import org.eevolution.context.paymentprocessor.api.service.PaymentService
 import org.eevolution.context.paymentprocessor.api.service.PaymentService.PaymentService
-import org.eevolution.context.paymentprocessor.api.service.UserService
+import org.eevolution.context.paymentprocessor.api.service.SecurityService.SecurityService
 import org.eevolution.context.paymentprocessor.api.service.UserService.UserService
-import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, PartnerBankAccount, Payment, PaymentProcessor}
-import org.eevolution.context.paymentprocessor.infrastructure.service.PayPalPaymentProcessorServiceLive
-import org.eevolution.context.paymentprocessor.infrastructure.service.StripePaymentProcessorServiceLive
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, PaymentProcessor}
+import org.eevolution.context.paymentprocessor.infrastructure.service.{PayPalPaymentProcessorServiceLive, StripePaymentProcessorServiceLive}
 import zio.{Has, RIO, ZLayer}
-
-import scala.util.Try
 
 /**
   * Standard Implementation for Domain Payment Service
@@ -54,7 +46,7 @@ object PaymentProcessorService {
     def processing(paymentId: Id): RIO[Any, Option[String]]
   }
 
-  def live : ZLayer[PaymentProcessorRepository , Throwable, Has[Service]] = ZLayer.fromService[PaymentProcessorRepository.Service, Service]{
+  def live: ZLayer[PaymentProcessorRepository, Throwable, Has[Service]] = ZLayer.fromService[PaymentProcessorRepository.Service, Service] {
     paymentProcessorRepository => {
       new PaymentProcessorService.Service {
 
@@ -68,15 +60,15 @@ object PaymentProcessorService {
 
   }
 
-  type LiveDependencies = PaymentProcessorRepository with PaymentService with  BankAccountService  with BankService with  PartnerService with PartnerBankAccountService with CurrencyService with UserService
+  type LiveDependencies = PaymentProcessorRepository with SecurityService with PaymentService with BankAccountService with BankService with PartnerService with PartnerBankAccountService with CurrencyService with UserService
 
-  def paypal: ZLayer[LiveDependencies, Throwable, Has[Service]] = ZLayer.fromServices[PaymentProcessorRepository.Service , PaymentService.Service,BankAccountService.Service,BankService.Service, PartnerService.Service ,PartnerBankAccountService.Service , CurrencyService.Service ,  UserService.Service, Service] {
-    ( paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService ) =>
-      PayPalPaymentProcessorServiceLive(paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService)
+  def paypal: ZLayer[LiveDependencies, Throwable, Has[Service]] = ZLayer.fromServices[PaymentProcessorRepository.Service, SecurityService.Service, PaymentService.Service, BankAccountService.Service, BankService.Service, PartnerService.Service, PartnerBankAccountService.Service, CurrencyService.Service, UserService.Service, Service] {
+    (paymentProcessorRepository, securityService, paymentService, bankAccountService, bankService, partnerService, partnerBankAccountService, currencyService, userService) =>
+      PayPalPaymentProcessorServiceLive(paymentProcessorRepository, securityService, paymentService, bankAccountService, bankService, partnerService, partnerBankAccountService, currencyService, userService)
   }
 
-  def stripe: ZLayer[LiveDependencies, Nothing, Has[Service]] = ZLayer.fromServices[PaymentProcessorRepository.Service , PaymentService.Service , BankAccountService.Service , BankService.Service, PartnerService.Service , PartnerBankAccountService.Service , CurrencyService.Service ,  UserService.Service, Service] {
-    (paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService) =>
-      StripePaymentProcessorServiceLive(paymentProcessorRepository , paymentService ,bankAccountService , bankService , partnerService , partnerBankAccountService , currencyService, userService)
+  def stripe: ZLayer[LiveDependencies, Throwable, Has[Service]] = ZLayer.fromServices[PaymentProcessorRepository.Service, SecurityService.Service, PaymentService.Service, BankAccountService.Service, BankService.Service, PartnerService.Service, PartnerBankAccountService.Service, CurrencyService.Service, UserService.Service, Service] {
+    (paymentProcessorRepository, securityService, paymentService, bankAccountService, bankService, partnerService, partnerBankAccountService, currencyService, userService) =>
+      StripePaymentProcessorServiceLive(paymentProcessorRepository, securityService, paymentService, bankAccountService, bankService, partnerService, partnerBankAccountService, currencyService, userService)
   }
 }

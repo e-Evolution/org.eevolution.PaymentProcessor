@@ -37,7 +37,7 @@ trait OrganizationMapping {
       _.name -> "Name",
       _.description -> "Description",
       _.replicationStrategyId -> "AD_ReplicationStrategy_ID",
-      _.parentOrganizationId ->"Parent_Org_ID",
+      _.parentOrganizationId -> "Parent_Org_ID",
       _.uuid -> "UUID")
   )
 }

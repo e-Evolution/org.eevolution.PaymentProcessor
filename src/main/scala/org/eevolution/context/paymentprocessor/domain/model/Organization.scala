@@ -16,9 +16,9 @@
 
 package org.eevolution.context.paymentprocessor.domain.model
 
-import java.time.Instant
+import java.time.LocalDateTime
 
-import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTime, Id, Table, TableDirect, YesNo}
+import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage._
 
 /**
   * Organization Entity
@@ -38,7 +38,20 @@ import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{DateTi
   * @param parentOrganizationId  ParentOrganization ID
   * @param uuid                  UUID
   */
-case class Organization(organizationId: Id, tenantId: TableDirect, isActive: YesNo = true, created: DateTime = Instant.now(), createdBy: Table, updated: DateTime = Instant.now(), updatedBy: Table, value: String, name: String, description: String, isSummary: Boolean = true, replicationStrategyId: TableDirect, parentOrganizationId: Table, uuid: String ) extends DomainModel
+case class Organization(organizationId: Id
+                        , tenantId: TableDirect
+                        , isActive: YesNo = true
+                        , created: DateTime = LocalDateTime.now
+                        , createdBy: Table
+                        , updated: DateTime = LocalDateTime.now
+                        , updatedBy: Table
+                        , value: String
+                        , name: String
+                        , description: String
+                        , isSummary: YesNo = true
+                        , replicationStrategyId: TableDirect
+                        , parentOrganizationId: Table
+                        , uuid: String) extends DomainModel
 
   with ActiveEnabled
   with Identifiable
@@ -69,5 +82,5 @@ object Organization {
              replicationStrategyId: TableDirect,
              parentOrganizationId: Table,
              uuid: String) = Organization(organizationId, tenantId, isActive, created, createdBy, updated,
-    updatedBy, value, name, description, isSummary, replicationStrategyId,parentOrganizationId, uuid)
+    updatedBy, value, name, description, isSummary, replicationStrategyId, parentOrganizationId, uuid)
 }

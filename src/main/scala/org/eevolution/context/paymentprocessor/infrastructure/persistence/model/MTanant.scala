@@ -5,6 +5,7 @@ import java.util.{Comparator, Properties}
 
 /**
   * Legacy Persistence Tenant Model
+  *
   * @param ctx
   * @param id
   * @param rs

@@ -23,6 +23,7 @@ import org.compiere.model.X_C_Payment
 
 /**
   * Legacy Persistence Payment Model
+  *
   * @param ctx
   * @param id
   * @param rs
