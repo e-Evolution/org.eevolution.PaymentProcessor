@@ -91,7 +91,8 @@ case class PayPalPaymentProcessorServiceLive(paymentProcessorRepository: Payment
     //  Create a new Tender
     card <- IO.effectTotal {
       val expirationDate = s"${payment.creditCardExpMM}${payment.creditCardExpYY}"
-      val creditCard = new CreditCard(payment.creditCardNumber, expirationDate);
+      val creditCard = new CreditCard(payment.creditCardNumber, expirationDate)
+      creditCard.setName(payment.accountName)
       creditCard.setCvv2(payment.creditCardVerificationCode);
       val card = new CardTender(creditCard)
       card
