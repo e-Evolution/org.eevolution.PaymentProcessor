@@ -55,7 +55,7 @@ case class StripePaymentProcessorServiceLive(paymentProcessorRepository: Payment
     //Validate Account Email Payment with Partner Value for Stripe Should be same that Business Partner Value
     payment <- if (partner.value.equals(maybePayment.get.accountEMail)) RIO.succeed(maybePayment.get) else RIO.fail(new exceptions.AdempiereException("@C_Payment_ID@ @Error@ @A_Email@"))
     // get or create a Stripe Customer based on the email , so the partner.value is the unique key and is based on email
-    customer <- IO.effectAsync[Throwable, Customer]{
+    customer <- IO.effectAsync[Throwable, Customer] {
       callback => {
         // find the Stripe customer based on email if exit then return if not create a new
         val queryOptions = new java.util.HashMap[String, Object]()
@@ -95,44 +95,44 @@ case class StripePaymentProcessorServiceLive(paymentProcessorRepository: Payment
     //then is new partner bank account created
     maybePartnerBankAccount <- partnerBankAccountService.getById(partner.partnerId, maybeBankAccount.get.bankId, stripeUser.get.userId, partner.value, payment.accountEMail, payment.creditCardNumber)
     //Validate Credit Card or Create a Business Partner Bank Account
-    stripePartnerBankAccount <- maybePartnerBankAccount match {
+    maybeStripePartnerBankAccount <- maybePartnerBankAccount match {
       case Some(partnerBankAccount) => RIO.succeed(Option(partnerBankAccount))
       case None =>
         // Create a default partner bank account for this credit card
-        val partnerBankAccount = partnerBankAccountService.create(partner.partnerId, maybeBankAccount.get.bankId, stripeUser.get.userId , partner.value,  payment.accountEMail, payment.creditCardType, payment.creditCardNumber, payment.creditCardExpMM, payment.creditCardExpYY, payment.creditCardVerificationCode)
+        val partnerBankAccount = partnerBankAccountService.create(partner.partnerId, maybeBankAccount.get.bankId, stripeUser.get.userId, partner.value, payment.accountEMail, payment.creditCardType, payment.creditCardNumber, payment.creditCardExpMM, payment.creditCardExpYY, payment.creditCardVerificationCode)
         partnerBankAccount
     }
     // Try get Stripe Source or Generate a Credit Card Token
-    source <- IO.effectAsync[Throwable,PaymentSource]{
+    source <- IO.effectAsync[Throwable, PaymentSource] {
       callback => {
         // If account exist the return this source to process payment , if not then is new token created
-        val accountName = stripePartnerBankAccount.get.accountName
-        if (accountName.equals(partner.value)) {
-          //Generate new Stripe source based on credit card info
-          val cardParameters = new java.util.HashMap[String, Object]()
-          val creditCardExpMM = payment.creditCardExpMM
-          val creditCardExpYY = payment.creditCardExpYY
-          cardParameters.put("number", payment.creditCardNumber)
-          cardParameters.put("exp_month", creditCardExpMM.toString)
-          cardParameters.put("exp_year", creditCardExpYY.toString)
-          cardParameters.put("cvc", payment.creditCardVerificationCode)
-          val tokenParameters = new java.util.HashMap[String, Object]()
-          tokenParameters.put("card", cardParameters);
-          //Create Stripe token
-          val token = Token.create(tokenParameters)
-          //The new token is setting as accountNo
-          stripePartnerBankAccount.foreach(partnerBankAccount => {
-            val updatePartnerBankAccount = partnerBankAccount.copy(accountName = token.getCard.getId)
+        maybeStripePartnerBankAccount.foreach(stripePartnerBankAccount => {
+          val accountName = stripePartnerBankAccount.accountName
+          if (accountName.equals(partner.value)) {
+            //Generate new Stripe source based on credit card info
+            val cardParameters = new java.util.HashMap[String, Object]()
+            val creditCardExpMM = payment.creditCardExpMM
+            val creditCardExpYY = payment.creditCardExpYY
+            cardParameters.put("number", payment.creditCardNumber)
+            cardParameters.put("exp_month", creditCardExpMM.toString)
+            cardParameters.put("exp_year", creditCardExpYY.toString)
+            cardParameters.put("cvc", payment.creditCardVerificationCode)
+            val tokenParameters = new java.util.HashMap[String, Object]()
+            tokenParameters.put("card", cardParameters);
+            //Create Stripe token
+            val token = Token.create(tokenParameters)
+            //The new token is setting as accountNo
+            val updatePartnerBankAccount = stripePartnerBankAccount.copy(accountName = token.getCard.getId)
             partnerBankAccountService.save(updatePartnerBankAccount)
-          })
-          //Get the Stripe Source for this token
-          val sourceParameters = new java.util.HashMap[String, Object]()
-          sourceParameters.put("source", token.getId)
-          val source = customer.getSources.create(sourceParameters)
-          callback(IO.succeed(source))
-        } else {
-          callback(IO.succeed(customer.getSources.retrieve(accountName)))
-        }
+            //Get the Stripe Source for this token
+            val sourceParameters = new java.util.HashMap[String, Object]()
+            sourceParameters.put("source", token.getId)
+            val source = customer.getSources.create(sourceParameters)
+            callback(IO.succeed(source))
+          } else {
+            callback(IO.succeed(customer.getSources.retrieve(accountName)))
+          }
+        })
       }
     }
     //Get the currency for this payment
@@ -164,7 +164,7 @@ case class StripePaymentProcessorServiceLive(paymentProcessorRepository: Payment
       )
       updatePayment
     }
-    paymentSaved <-  paymentService.save(payment)
+    paymentSaved <- paymentService.save(payment)
     responseMessage <- ZIO.succeed(Option(paymentSaved.get.responseMessage))
   } yield responseMessage
 }
