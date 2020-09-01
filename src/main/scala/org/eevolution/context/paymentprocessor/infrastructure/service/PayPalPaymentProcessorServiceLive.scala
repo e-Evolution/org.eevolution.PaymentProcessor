@@ -22,7 +22,7 @@ import org.compiere.util.{Env, Msg}
 import org.eevolution.context.paymentprocessor.api.repository.PaymentProcessorRepository
 import org.eevolution.context.paymentprocessor.api.service.{BankAccountService, BankService, CurrencyService, PartnerBankAccountService, PartnerService, PaymentProcessorService, PaymentService, SecurityService, UserService}
 import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, PaymentProcessor}
-import paypal.payflow.{CardTender, CreditCard, Currency, PayflowConnectionData, PayflowConstants, PayflowUtility, SDKProperties, SaleTransaction, TransactionResponse, UserInfo}
+import paypal.payflow.{CardTender, ClientInfo, CreditCard, Currency, PayflowConnectionData, PayflowConstants, PayflowUtility, SDKProperties, SaleTransaction, TransactionResponse, UserInfo}
 import zio.{IO, RIO, ZIO}
 
 case class PayPalPaymentProcessorServiceLive(paymentProcessorRepository: PaymentProcessorRepository.Service,
@@ -86,6 +86,7 @@ case class PayPalPaymentProcessorServiceLive(paymentProcessorRepository: Payment
       invoice.setAmt(paymentAmount)
       invoice.setPoNum(payment.poNumber)
       invoice.setInvNum(payment.reference)
+      invoice.setCustRef(payment.description)
       invoice
     }
     //  Create a new Tender
@@ -93,7 +94,7 @@ case class PayPalPaymentProcessorServiceLive(paymentProcessorRepository: Payment
       val expirationDate = s"${payment.creditCardExpMM}${payment.creditCardExpYY}"
       val creditCard = new CreditCard(payment.creditCardNumber, expirationDate)
       creditCard.setName(payment.accountName)
-      creditCard.setCvv2(payment.creditCardVerificationCode);
+      creditCard.setCvv2(payment.creditCardVerificationCode)
       val card = new CardTender(creditCard)
       card
     }
@@ -116,7 +117,7 @@ case class PayPalPaymentProcessorServiceLive(paymentProcessorRepository: Payment
         addressVerified = transactionResponse.getAvsAddr,
         zipVerified = transactionResponse.getAvsZip,
         cvvMatch = "Y".equals(transactionResponse.getCvv2Match),
-        info = transactionResponse.toString,
+        info = transactionResponse.getRespText,
         reference = transactionResponse.getPnref,
         referenceDC = transactionResponse.getCustRef,
         responseMessage = transactionResponse.getRespMsg,
