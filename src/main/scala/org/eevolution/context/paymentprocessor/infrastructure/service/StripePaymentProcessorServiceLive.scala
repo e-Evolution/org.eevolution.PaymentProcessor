@@ -133,11 +133,11 @@ case class StripePaymentProcessorServiceLive(paymentProcessorRepository: Payment
       }
     }
     //Save when the account name is equals that partner value and update the AccountName with token
-    updatePartnerBankAccount <- maybeStripePartnerBankAccount match {
-      case Some(stripePartnerBankAccount) if (stripePartnerBankAccount.accountName.equals(partner.value)) =>
+    _ <- maybeStripePartnerBankAccount match {
+      case Some(stripePartnerBankAccount) if stripePartnerBankAccount.accountName.equals(partner.value) =>
         val updatePartnerBankAccount = stripePartnerBankAccount.copy(accountName = source.getId)
         partnerBankAccountService.save(updatePartnerBankAccount)
-      case None => ZIO.fail(throw new AdempiereException("@C_BP_BankAccount_ID@ @SaveError@"))
+      case _ => IO.succeed()
     }
     //Get the currency for this payment
     currency <- currencyService.getById(payment.currencyId)
