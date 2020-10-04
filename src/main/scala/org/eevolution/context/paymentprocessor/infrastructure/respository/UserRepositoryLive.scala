@@ -12,7 +12,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
-  **/
+  * */
 
 package org.eevolution.context.paymentprocessor.infrastructure.respository
 
@@ -27,10 +27,8 @@ import zio.Task
 import scala.util.Try
 
 
-object UserRepositoryLive extends UserRepository.Service with UserMapping {
+case class UserRepositoryLive() extends UserRepository.Service with UserMapping {
   override def getById(id: Id): Task[Option[User]] = for {
-    //ctx <- environment.get.getContext
-    //trx <- environment.get.getTransaction
     user <- Task.fromTry {
       Try {
         //val result = prepare(quoteBankAccount.filter(_.bankAccountId == lift(id)))(trx.getConnection).executeQuery
@@ -55,10 +53,9 @@ object UserRepositoryLive extends UserRepository.Service with UserMapping {
     }
   } yield user
 
-  override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): Task[Option[User]] = UserBuilder().WithPartnerId(partner.partnerId).WithName(userName).WithEmail(accountEmail).WithPassword(userPassword).build()
+  override def create(partner: Partner, userName: String, accountEmail: String, userPassword: String): Task[Option[User]] = UserBuilder().WithPartnerId(partner.partnerId).WithDescription(partner.description).WithName(userName).WithEmail(accountEmail).WithPassword(userPassword).build()
 
-  override def save(user: User): Task[Option[User]] = for {
-    newUser <- Task.fromTry {
+  override def save(user: User): Task[Option[User]] = Task.fromTry {
       Try {
         //val userModel = new MUser(ctx, user.userId, trx.getTrxName)
         val userModel = new MUser(Env.getCtx, user.userId, null)
@@ -68,6 +65,7 @@ object UserRepositoryLive extends UserRepository.Service with UserMapping {
         userModel.setName(user.name)
         userModel.setEMail(user.email)
         userModel.setPassword(user.password)
+        userModel.saveEx()
         val newUser = user.copy(
           userId = userModel.get_ID,
           uuid = userModel.getUUID,
@@ -79,7 +77,4 @@ object UserRepositoryLive extends UserRepository.Service with UserMapping {
         Option(newUser)
       }
     }
-  } yield newUser
-
-
 }

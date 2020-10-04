@@ -18,7 +18,7 @@ package org.eevolution.context.paymentprocessor.api.repository
 
 import org.eevolution.context.paymentprocessor.domain.ubiquitouslanguage.{Id, PartnerBankAccount}
 import org.eevolution.context.paymentprocessor.infrastructure.respository.PartnerBankAccountRepositoryLive
-import zio.{Has, RIO, ZLayer}
+import zio.{Has, Task, ZLayer}
 
 /**
   * Standard Implementation for Bank Account Repository
@@ -27,11 +27,11 @@ object PartnerBankAccountRepository {
   type PartnerBankAccountRepository = Has[PartnerBankAccountRepository.Service]
 
   trait Service {
-    def getById(partnerId: Id, bankId: Id, userId: Id, accountName: String, email: String, creditCardNumber: String): RIO[Any, Option[PartnerBankAccount]]
+    def getById(partnerId: Id, bankId: Id, userId: Id, accountName: String, email: String, creditCardNumber: String): Task[Option[PartnerBankAccount]]
 
-    def create(partnerId: Id, bankId: Id, userId: Id, accountName: String, accountEmail: String, creditCardType: String, creditCardNumber: String, creditCardExpMM: Id, creditCardExpYY: Id, creditCardVV: String): RIO[Any, Option[PartnerBankAccount]]
+    def create(partnerId: Id, bankId: Id, userId: Id, accountName: String, accountEmail: String, creditCardType: String, creditCardNumber: String, creditCardExpMM: Id, creditCardExpYY: Id, creditCardVV: String): Task[Option[PartnerBankAccount]]
 
-    def save(partnerBankAccount: PartnerBankAccount): RIO[Any, Option[PartnerBankAccount]]
+    def save(partnerBankAccount: PartnerBankAccount): Task[Option[PartnerBankAccount]]
   }
 
 

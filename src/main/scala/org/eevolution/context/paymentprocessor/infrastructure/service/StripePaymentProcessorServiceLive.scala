@@ -12,7 +12,7 @@
   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
   * Email: victor.perez@e-evolution.com, http://www.e-evolution.com , http://github.com/e-Evolution
   * Created by victor.perez@e-evolution.com , www.e-evolution.com
-  **/
+  * */
 
 package org.eevolution.context.paymentprocessor.infrastructure.service
 
@@ -121,9 +121,6 @@ case class StripePaymentProcessorServiceLive(paymentProcessorRepository: Payment
             tokenParameters.put("card", cardParameters);
             //Create Stripe token
             val token = Token.create(tokenParameters)
-            //The new token is setting as accountNo
-            val updatePartnerBankAccount = stripePartnerBankAccount.copy(accountName = token.getCard.getId)
-            partnerBankAccountService.save(updatePartnerBankAccount)
             //Get the Stripe Source for this token
             val sourceParameters = new java.util.HashMap[String, Object]()
             sourceParameters.put("source", token.getId)
@@ -134,6 +131,13 @@ case class StripePaymentProcessorServiceLive(paymentProcessorRepository: Payment
           }
         })
       }
+    }
+    //Save when the account name is equals that partner value and update the AccountName with token
+    updatePartnerBankAccount <- maybeStripePartnerBankAccount match {
+      case Some(stripePartnerBankAccount) if (stripePartnerBankAccount.accountName.equals(partner.value)) =>
+        val updatePartnerBankAccount = stripePartnerBankAccount.copy(accountName = source.getId)
+        partnerBankAccountService.save(updatePartnerBankAccount)
+      case None => ZIO.fail(throw new AdempiereException("@C_BP_BankAccount_ID@ @SaveError@"))
     }
     //Get the currency for this payment
     currency <- currencyService.getById(payment.currencyId)
