@@ -113,12 +113,12 @@ object PaymentOnlineService {
 
   def main(args: Array[String]): Unit = {
     Adempiere.startup(false)
-    Ini.setProperty(Ini.P_UID, "PiedATerreAdmin")
-    Ini.setProperty(Ini.P_PWD, "PiedATerreAdmin")
-    Ini.setProperty(Ini.P_ROLE, "Pied A Terre, Inc Admin")
-    Ini.setProperty(Ini.P_CLIENT, "Pied A Terre, Inc")
-    Ini.setProperty(Ini.P_ORG, "Pied A Terre")
-    Ini.setProperty(Ini.P_WAREHOUSE, "Estándar")
+    Ini.setProperty(Ini.P_UID, "GardenAdmin")
+    Ini.setProperty(Ini.P_PWD, "GardenAdmin")
+    Ini.setProperty(Ini.P_ROLE, "GardenWorld Admin")
+    Ini.setProperty(Ini.P_CLIENT, "GardenWorld")
+    Ini.setProperty(Ini.P_ORG, "HQ")
+    Ini.setProperty(Ini.P_WAREHOUSE, "HQ Warehouse")
     Ini.setProperty(Ini.P_LANGUAGE, "English")
     val login = new Login(Env.getCtx)
     login.batchLogin
@@ -126,7 +126,7 @@ object PaymentOnlineService {
     val processInfo = ProcessBuilder.create(Env.getCtx)
       .process(PaymentOnlineAbstract.getProcessId)
       .withTitle(PaymentOnlineAbstract.getProcessName)
-      .withRecordId(I_C_Payment.Table_ID, 1000103)
+      .withRecordId(I_C_Payment.Table_ID, 1000043)
       .withoutTransactionClose
       .execute(null)
 
